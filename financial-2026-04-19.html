@@ -1,0 +1,299 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Tutu and Lulu — CFO Dashboard — Apr 13-19, 2026</title><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; color: #1f2937; padding: 24px; line-height: 1.5; }
+.container { max-width: 1280px; margin: 0 auto; }
+.header { background: #1f2937; color: white; padding: 24px 28px; border-radius: 12px 12px 0 0; }
+.header h1 { font-size: 24px; font-weight: 700; }
+.header .meta { font-size: 13px; color: #9ca3af; margin-top: 6px; }
+.tabs { background: #374151; padding: 12px 28px; color: #e5e7eb; font-size: 13px; border-radius: 0 0 12px 12px; margin-bottom: 24px; }
+.tabs span { margin-right: 18px; }
+.section-title { font-size: 16px; font-weight: 600; margin: 24px 0 12px; color: #1f2937; }
+.flag { padding: 16px 20px; border-left: 4px solid; border-radius: 6px; margin-bottom: 12px; background: white; }
+.flag.red { border-color: #ef4444; background: #fef2f2; }
+.flag.yellow { border-color: #f59e0b; background: #fffbeb; }
+.flag.blue { border-color: #3b82f6; background: #eff6ff; }
+.flag.green { border-color: #22c55e; background: #f0fdf4; }
+.flag-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.flag-body { font-size: 13px; color: #374151; line-height: 1.55; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kpi { background: white; padding: 16px 18px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.kpi-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-value { font-size: 28px; font-weight: 700; margin: 6px 0; }
+.kpi-sub { font-size: 11px; color: #6b7280; }
+.kpi-status { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-top: 6px; font-weight: 600; }
+.kpi-status.green { background: #dcfce7; color: #166534; }
+.kpi-status.red { background: #fee2e2; color: #991b1b; }
+.kpi-status.yellow { background: #fef3c7; color: #92400e; }
+.value-green { color: #16a34a; }
+.value-red { color: #dc2626; }
+.value-yellow { color: #d97706; }
+.channel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.channel { background: white; border-radius: 8px; padding: 18px; border-top: 4px solid #6366f1; }
+.channel.dtc { border-top-color: #6366f1; }
+.channel.ws { border-top-color: #10b981; }
+.channel.amzn { border-top-color: #f59e0b; }
+.channel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.channel-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+.channel-row.total { font-weight: 600; border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 6px; }
+.neg { color: #dc2626; }
+.pos { color: #16a34a; }
+table { width: 100%; background: white; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04); margin-bottom: 16px; font-size: 12.5px; }
+th { background: #1f2937; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 9px 12px; border-bottom: 1px solid #e5e7eb; }
+tr:last-child td { border-bottom: none; }
+tr.total { background: #f3f4f6; font-weight: 600; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.badge.red { background: #fee2e2; color: #991b1b; }
+.badge.yellow { background: #fef3c7; color: #92400e; }
+.badge.green { background: #dcfce7; color: #166534; }
+.note { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.actions { background: white; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+.action { padding: 10px 0; border-bottom: 1px solid #f3f4f6; display: flex; gap: 14px; align-items: flex-start; font-size: 13px; }
+.action:last-child { border-bottom: none; }
+.action-num { background: #1f2937; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+.action-content { flex: 1; }
+.action-title { font-weight: 600; margin-bottom: 3px; }
+.action-body { color: #4b5563; font-size: 12.5px; line-height: 1.55; }
+.footer { text-align: center; color: #6b7280; font-size: 11px; padding: 20px 0 4px; line-height: 1.7; }
+@media print { body { padding: 0; background: white; } .kpi-grid { gap: 8px; } }
+</style></head><body>
+<script>
+const REPORT_META = {
+  name:        "CFO Dashboard — Apr 13-19 2026",
+  date:        "2026-04-19",
+  type:        "financial",
+  description: "Weekly P&L: DTC + Wholesale + Amazon — contribution margin, ad efficiency, action items"
+};
+</script>
+<style id="lc-nav-styles">
+  #lc-nav { font-family: 'DM Sans', sans-serif; background: #2D5016; color: white; padding: 0 1.5rem; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  #lc-nav a { color: white; text-decoration: none; }
+  #lc-nav-left { display: flex; align-items: center; gap: 1rem; }
+  #lc-nav-home { font-size: 0.82rem; opacity: 0.75; transition: opacity 0.15s; }
+  #lc-nav-home:hover { opacity: 1; }
+  #lc-nav-divider { color: rgba(255,255,255,0.3); }
+  #lc-nav-title { font-size: 0.9rem; font-weight: 600; }
+  #lc-nav-right { display: flex; align-items: center; gap: 1rem; }
+  #lc-nav-date { font-family: 'DM Mono', monospace; font-size: 0.7rem; opacity: 0.65; letter-spacing: 0.05em; }
+  #lc-nav-tag { font-size: 0.65rem; font-family: 'DM Mono', monospace; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+  .lc-tag-shopify { background: #96BF48; color: #1A2E00; }
+  .lc-tag-amazon { background: #FF9900; color: #3A1A00; }
+  .lc-tag-ads { background: #4285F4; color: white; }
+  .lc-tag-financial { background: #8B5CF6; color: white; }
+  .lc-tag-general { background: rgba(255,255,255,0.2); color: white; }
+  #lc-nav-print { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 5px; cursor: pointer; }
+  @media print { #lc-nav { display: none; } }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<nav id="lc-nav">
+  <div id="lc-nav-left">
+    <a id="lc-nav-home" href="../index.html">← Reports Hub</a>
+    <span id="lc-nav-divider">/</span>
+    <span id="lc-nav-title"></span>
+  </div>
+  <div id="lc-nav-right">
+    <span id="lc-nav-date"></span>
+    <span id="lc-nav-tag"></span>
+    <button id="lc-nav-print" onclick="window.print()">⎙ Print / PDF</button>
+  </div>
+</nav>
+<script>
+(function() {
+  const m = window.REPORT_META || {};
+  document.getElementById('lc-nav-title').textContent = m.name || 'Report';
+  if (m.date) {
+    const d = new Date(m.date + 'T12:00:00');
+    document.getElementById('lc-nav-date').textContent = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  const tag = document.getElementById('lc-nav-tag');
+  const labels = { shopify:'Shopify', amazon:'Amazon', ads:'Google Ads', financial:'Financial', general:'General' };
+  tag.textContent = labels[m.type] || m.type || '';
+  tag.className = 'lc-tag-' + (m.type || 'general');
+  if (m.name && m.date) document.title = m.name + ' — ' + m.date;
+})();
+</script>
+
+<div class="container">
+<div class="header">
+  <h1>🌵 Tutu and Lulu — CFO Dashboard</h1>
+  <div class="meta">📅 Week of April 13–19, 2026 &nbsp;·&nbsp; 🔄 Generated April 29, 2026 · v5 layout (11-card 3-row Weekly Summary) &nbsp;·&nbsp; 📊 Sources: Shopify DTC · Shopify Wholesale · Amazon SP · Google Ads · Meta Ads · Amazon Ads · COGS File · QuickBooks</div>
+</div>
+<div class="tabs">
+  <span>⚠️ Flags</span><span>📊 Summary</span><span>🏪 Channels</span>
+  <span>🔵 Google Ads</span><span>🟦 Meta Ads</span><span>🟠 Amazon SP</span><span>💡 Actions</span>
+</div>
+
+<div class="note"><b>📈 Data Availability — Mixed.</b> Amazon SP US <b>settlement (v2_settlement_report_data_flat_file_v2) for Apr 13-19 has not yet posted</b> to Windsor (most recent settlement posted dates: Apr 1-10 and Apr 20-24). Commission and FBA fees use the documented blended rates: <b>14.5% commission</b> on <code>sales_and_traffic_report_by_date</code> ordered sales and <b>$4.79/unit</b> FBA fee on units shipped (per per_unit_economics methodology, v3). Amazon SP CA had zero activity this week. Amazon SP MX had 4 units ordered ($2,796 MXN ≈ $164 USD at BoC April 2026 monthly avg ~17 MXN/USD); included in totals but immaterial. QuickBooks bookskeep variable Cost of Sales returned <b>$4,409.60</b> for the week — see Reconciliation section. All figures USD.</div>
+
+<div class="section-title">⚠️ Critical Flags</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Expected Profit: –$2,094 (Threshold: $4,000) — BELOW TARGET</div>
+  <div class="flag-body">Contribution Amount of $4,384 did not cover the $6,478 weekly OpEx assumption, leaving a shortfall of $2,094. Three of the five primary contributing factors are operational levers: (1) total ad spend at <b>$7,707</b> is 61% higher than the prior week's $4,791, mostly driven by Meta Scale 1 ($2,456) + Retargeting DPA ($1,380) and Google PMax/PAM Shopping ($742 split across two PMax campaigns); (2) DTC contribution margin is <b>-21.5%</b> on $5,647 of net revenue — paid-DTC is heavily subsidized; (3) Wholesale unit price mix this week was unusually low (avg net unit $8.72 vs prior week's $12.53), compressing wholesale GM to <b>23.9%</b>.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 DTC Contribution Margin: -21.5% (Target: 30%+) — Severely Negative</div>
+  <div class="flag-body">DTC delivered <b>$3,959</b> in gross margin (70.1% on $5,647 net revenue) but Google + Meta spend of <b>$5,175</b> exceeded gross margin by $1,217. Paid-DTC is consuming far more profit than it generates. Tracking-tag attribution gap (G+Meta combined report only $6,418 attributed value vs $5,647 actual DTC net revenue) makes paid-budget decisions difficult — pixel/tag audit on Shopify Order Status page is the single highest-leverage operational task.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Google Ads Blended ROAS: 0.92x (Target: 5.0x · Floor: 3.0x) — Below Floor on $1,326</div>
+  <div class="flag-body">Google attributed <b>$1,222</b> in conversion value across 22 conversions / 2,117 clicks. Two PMax campaigns spent <b>$742</b> combined ("[EC] PMAX | Spring 2026" $370 / 0.73x ROAS, "PMax: PAM shopping only ALL" $373 / 0x — zero attributed conversions). "Pam Shopping april 14 2026" spent $478 at 1.27x ROAS. Brand Search held 3.28x, the only campaign above floor. <b>Recommendation: pause both PMax campaigns immediately</b> — exactly what was acted on the following week per the Apr 20-26 dashboard.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Meta ROAS: 1.35x (Target: 5.0x · Floor: 3.0x) — Below Floor on $3,849</div>
+  <div class="flag-body">Meta spent <b>$3,849</b> across two active campaigns. Scale 1 at $2,456 / 1.45x ROAS, Retargeting DPA at $1,380 / 1.10x. Reported Meta value of $5,196 likely understated due to iOS14 attribution drift. Spend is ~91% of the prior week's $3,848 (essentially flat then) and the Apr 20-26 follow-up week cut Meta to $2,016 — see Action Items.</div>
+</div>
+
+<div class="flag yellow">
+  <div class="flag-title">🟡 Wholesale Contribution Margin: 23.9% (Target: 30%+) — Below Target</div>
+  <div class="flag-body">Wholesale delivered $1,111 contribution on $4,650 net revenue. The reason this dropped from the prior week's 47.0% is unit-mix: 533 net units this week vs 399 prior, but lower revenue ($4,650 vs $4,998) — the average net wholesale unit fell to $8.72 from $12.53. 28 Faire orders contributed $1,232 in commission (20.3% effective rate, mid-range between 15% reorder and 25% new). Channel still positive on zero ad spend.</div>
+</div>
+
+<div class="flag yellow">
+  <div class="flag-title">🟡 Amazon SP Overall ACOS: 29.4% (Target &lt;20% · Flag &gt;30%) — 38 campaigns over-flag</div>
+  <div class="flag-body">Amazon SP spent <b>$2,532</b> attributing <b>$8,614</b> at 3.40x ROAS — overall ACOS just barely under flag. 38 campaigns are above 30% ACOS, with the worst being All Smocked Bishop Dresses BM (86.6%), All Catalog DAT2 (75.7%), All Smocked Shortalls SP DAT (65.2%), and Boys Polo Shirts MNL Category (58.7%). "All FBA Active Products - Auto" and "All Spring Products 2026 - Auto" are healthy at 14.4% and 29.5% on the largest spend ($324 and $523).</div>
+</div>
+
+<div class="flag blue">
+  <div class="flag-title">ℹ️ Amazon US Strong — $13,481 gross / 380 units ordered, 47.0% CM</div>
+  <div class="flag-body">Amazon US gross sales (sales_and_traffic_report) of <b>$13,481</b> across 380 ordered / 382 shipped units. After 14.5% blended referral commission ($1,955), $4.79/unit FBA ($1,830), and miscellaneous $138, net seller proceeds = $9,559. Gross margin 73.5%, contribution margin 47.0% after $2,532 SP ad spend — healthiest channel by both measures.</div>
+</div>
+
+<div class="section-title">📊 Weekly Summary — April 13–19, 2026</div>
+
+<div class="kpi-grid">
+  <!-- Row 1: Revenue + units -->
+  <div class="kpi"><div class="kpi-label">Total Gross Revenue</div><div class="kpi-value">$26,860</div><div class="kpi-sub">DTC gross $6,503 · Wholesale gross $6,712 · Amazon US gross $13,481 · Amazon MX $164</div></div>
+  <div class="kpi"><div class="kpi-label">Total Net Revenue</div><div class="kpi-value">$19,855</div><div class="kpi-sub">After discounts, refunds, Faire/Amazon fees · +13.8% wow vs prior $17,452</div></div>
+  <div class="kpi"><div class="kpi-label">Total Gross Margin</div><div class="kpi-value value-green">61.5%</div><div class="kpi-sub">$12,206 after COGS @ $6.64/unit (target 55%+)</div><span class="kpi-status green">✓ Above Target</span></div>
+  <div class="kpi"><div class="kpi-label">Total Units Sold</div><div class="kpi-value">1,152</div><div class="kpi-sub">DTC 233 · Wholesale 533 · Amazon US 382 · Amazon MX 4</div></div>
+
+  <!-- Row 2: Spend + Contribution + Expected Profit -->
+  <div class="kpi"><div class="kpi-label">Total Ad Spend</div><div class="kpi-value">$7,707</div><div class="kpi-sub">Google $1,326 · Meta $3,849 · Amazon SP $2,532</div></div>
+  <div class="kpi"><div class="kpi-label">Contribution Amount</div><div class="kpi-value value-yellow">$4,384</div><div class="kpi-sub">Net revenue – COGS – platform fees – ad spend</div></div>
+  <div class="kpi"><div class="kpi-label">Contribution Margin</div><div class="kpi-value value-yellow">22.1%</div><div class="kpi-sub">$4,384 ÷ $19,855 (target 30%+)</div><span class="kpi-status yellow">Marginal</span></div>
+  <div class="kpi"><div class="kpi-label">Expected Profit</div><div class="kpi-value value-red">–$2,094</div><div class="kpi-sub">Contribution – Wkly Operating est ($6,478 for both T&amp;L and LC, NOT including Owner Compensation nor Debt Repay)</div><span class="kpi-status red">Below Target</span></div>
+
+  <!-- Row 3: Ad efficiency -->
+  <div class="kpi"><div class="kpi-label">MER (Marketing Efficiency)</div><div class="kpi-value value-yellow">2.58x</div><div class="kpi-sub">Total Net Revenue ÷ Total Ad Spend (target 4.0x · floor 2.5x)</div></div>
+  <div class="kpi"><div class="kpi-label">Blended ROAS (G + Meta)</div><div class="kpi-value value-red">1.24x</div><div class="kpi-sub">Target 5.0x · floor 3.0x</div><span class="kpi-status red">Below Floor</span></div>
+  <div class="kpi"><div class="kpi-label">Amazon ACOS</div><div class="kpi-value value-yellow">29.4%</div><div class="kpi-sub">SP Attributed · Target &lt;20% · Flag &gt;30%</div><span class="kpi-status yellow">Marginal</span></div>
+  <div class="kpi" style="background:transparent;box-shadow:none;"></div>
+</div>
+
+<div class="section-title">🏪 Channel P&amp;L — Landed COGS Applied ($6.64/unit = $5.56 supplier + $1.08 inbound)</div>
+
+<div class="channel-grid">
+  <div class="channel dtc">
+    <h3>🛒 Shopify DTC (lil-cactus)</h3>
+    <div class="channel-row"><span>Gross Revenue</span><span>$6,503</span></div>
+    <div class="channel-row"><span>Discounts</span><span class="neg">–$851</span></div>
+    <div class="channel-row"><span>Refunds (1 unit)</span><span class="neg">–$6</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span>$5,647</span></div>
+    <div class="channel-row"><span>Units Sold (net)</span><span>233</span></div>
+    <div class="channel-row"><span>COGS (233 × $6.64)</span><span class="neg">–$1,547</span></div>
+    <div class="channel-row"><span>Shopify Fee (~2.5%)</span><span class="neg">–$141</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="pos">70.1% / $3,959</span></div>
+    <div class="channel-row"><span>Ad Spend (Google + Meta)</span><span class="neg">–$5,175</span></div>
+    <div class="channel-row total"><span>Contribution Margin</span><span class="neg">-21.5% / –$1,217</span></div>
+  </div>
+  <div class="channel ws">
+    <h3>🏬 Shopify Wholesale / Faire</h3>
+    <div class="channel-row"><span>Gross Revenue (28 Faire orders)</span><span>$6,712</span></div>
+    <div class="channel-row"><span>Discounts</span><span class="neg">–$457</span></div>
+    <div class="channel-row"><span>Faire Commission</span><span class="neg">–$1,232</span></div>
+    <div class="channel-row"><span>Faire Payment Processing</span><span class="neg">–$192</span></div>
+    <div class="channel-row"><span>Returns / Refunds</span><span class="neg">–$181</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span>$4,650</span></div>
+    <div class="channel-row"><span>Units Shipped (net)</span><span>533 / 559 gross – 26 returned</span></div>
+    <div class="channel-row"><span>COGS (533 × $6.64)</span><span class="neg">–$3,539</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="pos">23.9% / $1,111</span></div>
+    <div class="channel-row"><span>Effective Faire Rate</span><span>20.3%</span></div>
+    <div class="channel-row total"><span>Contribution Margin</span><span class="pos">23.9% / $1,111</span></div>
+  </div>
+  <div class="channel amzn">
+    <h3>🟠 Amazon (US) — Doc Rates (Apr 13-19 settlement pending)</h3>
+    <div class="channel-row"><span>Gross Sales (sales_traffic_report)</span><span>$13,481</span></div>
+    <div class="channel-row"><span>Referral Commission (14.5% blended)</span><span class="neg">–$1,955</span></div>
+    <div class="channel-row"><span>FBA Per-Unit Fee ($4.79 × 382)</span><span class="neg">–$1,830</span></div>
+    <div class="channel-row"><span>Other Fees (382 × $0.36)</span><span class="neg">–$138</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span>$9,559</span></div>
+    <div class="channel-row"><span>Units Ordered / Shipped</span><span>380 / 382</span></div>
+    <div class="channel-row"><span>COGS (382 × $6.64)</span><span class="neg">–$2,536</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="pos">73.5% / $7,022</span></div>
+    <div class="channel-row"><span>Amazon SP Ad Spend</span><span class="neg">–$2,532</span></div>
+    <div class="channel-row total"><span>Contribution Margin</span><span class="pos">47.0% / $4,490</span></div>
+  </div>
+</div>
+
+<table>
+<tr><th>Channel</th><th>Net Revenue</th><th>COGS</th><th>Gross Margin</th><th>GM%</th><th>Ad Spend</th><th>Contribution Margin</th><th>CM%</th><th>Status</th></tr>
+<tr><td><b>Shopify DTC</b></td><td>$5,647</td><td>$1,547</td><td>$3,959</td><td><b>70.1%</b></td><td>$5,175</td><td>–$1,217</td><td><b>-21.5%</b></td><td><span class="badge red">Negative</span></td></tr>
+<tr><td><b>Wholesale / Faire</b></td><td>$4,650</td><td>$3,539</td><td>$1,111</td><td><b>23.9%</b></td><td>$0</td><td>$1,111</td><td><b>23.9%</b></td><td><span class="badge yellow">Below 30%</span></td></tr>
+<tr><td><b>Amazon (US)</b></td><td>$9,559</td><td>$2,536</td><td>$7,022</td><td><b>73.5%</b></td><td>$2,532</td><td>$4,490</td><td><b>47.0%</b></td><td><span class="badge green">Above 30%</span></td></tr>
+<tr class="total"><td>TOTAL</td><td>$19,855</td><td>$7,649</td><td>$12,206</td><td>61.5%</td><td>$7,707</td><td>$4,384</td><td>22.1%</td><td><span class="badge yellow">Below Target</span></td></tr>
+</table>
+
+<div class="section-title">🔵 Google Ads — Lil Cactus (139-095-5762)</div>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-label">Total Spend</div><div class="kpi-value">$1,326</div><div class="kpi-sub">5 active campaigns this week</div></div>
+  <div class="kpi"><div class="kpi-label">Attributed Conv. Value</div><div class="kpi-value">$1,222</div><div class="kpi-sub">22 conversions tracked</div></div>
+  <div class="kpi"><div class="kpi-label">Blended ROAS</div><div class="kpi-value value-red">0.92x</div><div class="kpi-sub">Target: 5.0x · Floor: 3.0x</div><span class="kpi-status red">Below Floor</span></div>
+  <div class="kpi"><div class="kpi-label">Total Clicks</div><div class="kpi-value">2,117</div><div class="kpi-sub">CPC $0.63 blended</div></div>
+</div>
+<table>
+<tr><th>Campaign</th><th>Spend</th><th>Conv. Value</th><th>Conversions</th><th>Clicks</th><th>ROAS</th><th>Status</th><th>Action</th></tr>
+<tr><td>[EC] Search | Brand Related Keywords</td><td>$104</td><td>$342</td><td>3</td><td>255</td><td><b>3.28x</b></td><td><span class="badge yellow">Below target, above floor</span></td><td>Monitor</td></tr><tr><td>[EC] PMAX | Spring 2026</td><td>$370</td><td>$271</td><td>4</td><td>686</td><td><b>0.73x</b></td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr><tr><td>PAM shopping only ALL</td><td>$2</td><td>$0</td><td>0</td><td>3</td><td><b>0.00x</b></td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr><tr><td>PMax: PAM shopping only ALL</td><td>$373</td><td>$0</td><td>0</td><td>488</td><td><b>0.00x</b></td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr><tr><td>Pam Shopping april 14 2026 Spring Summer Boys and Girls</td><td>$478</td><td>$609</td><td>15</td><td>685</td><td><b>1.27x</b></td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr>
+</table>
+
+<div class="section-title">🟦 Meta Ads — LilCactusOfficial</div>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-label">Total Spend</div><div class="kpi-value">$3,849</div><div class="kpi-sub">2 active campaigns</div></div>
+  <div class="kpi"><div class="kpi-label">Reported Purchases</div><div class="kpi-value">56</div><div class="kpi-sub">7-day click / 1-day view attribution</div></div>
+  <div class="kpi"><div class="kpi-label">Reported Conv. Value</div><div class="kpi-value">$5,196</div><div class="kpi-sub">Pixel-attributed only</div></div>
+  <div class="kpi"><div class="kpi-label">Reported ROAS</div><div class="kpi-value value-red">1.35x</div><div class="kpi-sub">Target: 5.0x · Likely understated</div><span class="kpi-status red">Below Floor</span></div>
+</div>
+<table>
+<tr><th>Campaign</th><th>Spend</th><th>Purchases</th><th>Revenue</th><th>ROAS</th><th>CPM</th><th>CTR</th><th>Status</th><th>Action</th></tr>
+<tr><td>EC | Adv+ Catalog | Feb 23 | Scale 1</td><td>$2,456</td><td>42</td><td>$3,559</td><td><b>1.45x</b></td><td>$26.85</td><td>4.58%</td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr><tr><td>Madgicx - Acquisition Re-Engagement Campaign - Master Campaign-2026-03-24</td><td>$13</td><td>0</td><td>$0</td><td><b>0.00x</b></td><td>$20.00</td><td>2.30%</td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr><tr><td>Retargeting - DPA - Lil Cactus  April 1 2026</td><td>$1,380</td><td>13</td><td>$1,521</td><td><b>1.10x</b></td><td>$36.23</td><td>3.79%</td><td><span class="badge red">Below floor</span></td><td>Reduce or pause</td></tr>
+</table>
+
+<div class="section-title">🟠 Amazon Sponsored Products — Tutu and Lulu Fashion</div>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-label">Total SP Spend</div><div class="kpi-value">$2,532</div><div class="kpi-sub">56 active campaigns</div></div>
+  <div class="kpi"><div class="kpi-label">Attributed Sales (14d)</div><div class="kpi-value">$8,614</div><div class="kpi-sub">vs $13,481 actual ordered (sales report)</div></div>
+  <div class="kpi"><div class="kpi-label">Overall ACOS</div><div class="kpi-value value-yellow">29.4%</div><div class="kpi-sub">Target &lt;20% · Flag &gt;30%</div><span class="kpi-status yellow">Marginal</span></div>
+  <div class="kpi"><div class="kpi-label">Amazon SP ROAS</div><div class="kpi-value">3.40x</div><div class="kpi-sub">Target 5.0x</div></div>
+</div>
+<table>
+<tr><th>Campaign</th><th>7d Spend</th><th>Attributed Sales</th><th>ACOS</th><th>Status</th></tr>
+<tr><td>All Spring Products 2026 - Auto</td><td>$523</td><td>$1,771</td><td><b>29.5%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>All FBA Active Products - Auto</td><td>$324</td><td>$2,247</td><td><b>14.4%</b></td><td><span class="badge green">Good</span></td></tr><tr><td>Best-Selling Products Feb & March 2025 - Auto</td><td>$159</td><td>$452</td><td><b>35.1%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Gingham One-Piece Bubble Romper- 34312 - MNL</td><td>$115</td><td>$264</td><td><b>43.7%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Gingham One-Piece Bubble Romper- 34312 - Discovery</td><td>$101</td><td>$403</td><td><b>25.0%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>Floral Bouquet & Cross Bishop Dress - 31939 - BM</td><td>$98</td><td>$369</td><td><b>26.7%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>All Ruffle Rompers - MNL</td><td>$93</td><td>$0</td><td><b>—</b></td><td><span class="badge red">Zero attribution</span></td></tr><tr><td>Branded Keywords</td><td>$92</td><td>$303</td><td><b>30.3%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Light Blue Seersucker Bubble Romper - 34311_ Auto</td><td>$86</td><td>$264</td><td><b>32.4%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Toddler One-Piece Bubble Romper - 34312 - Broad</td><td>$83</td><td>$99</td><td><b>84.1%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Lil Cactus - Premium ST Branded Keywords</td><td>$63</td><td>$310</td><td><b>20.4%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>All Catalog Ghost Auto</td><td>$57</td><td>$349</td><td><b>16.2%</b></td><td><span class="badge green">Good</span></td></tr><tr><td>Baseball Smocked Bishop Dress -  32557 - MNL</td><td>$51</td><td>$228</td><td><b>22.2%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>All Catalog - Auto</td><td>$47</td><td>$81</td><td><b>57.7%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>All Smocked Shortalls - SP DAT</td><td>$46</td><td>$70</td><td><b>65.2%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Boys Polo Shirts - 38514 - MNL - Category Targeting</td><td>$44</td><td>$75</td><td><b>58.7%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Toddler Smocked Romper - 31994 - AUTO</td><td>$36</td><td>$237</td><td><b>15.2%</b></td><td><span class="badge green">Good</span></td></tr><tr><td>All Smocked Bishop Dresses - BM</td><td>$35</td><td>$41</td><td><b>86.6%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>Blue Gingham jonjon Shortalls - 33890 - Auto</td><td>$35</td><td>$139</td><td><b>25.4%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>Boys Polo Shirts -  38513 - MNL Match Type</td><td>$34</td><td>$0</td><td><b>—</b></td><td><span class="badge red">Zero attribution</span></td></tr><tr><td>White & Pink Cross Bishop Dress - 32037 - MNL</td><td>$34</td><td>$164</td><td><b>20.6%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>All Catalog - Branded Keywords 2</td><td>$33</td><td>$115</td><td><b>29.0%</b></td><td><span class="badge yellow">Acceptable</span></td></tr><tr><td>All Catalog - DAT2</td><td>$30</td><td>$40</td><td><b>75.7%</b></td><td><span class="badge red">Over Flag</span></td></tr><tr><td>All Shirts & Shorts - SP - DAT</td><td>$25</td><td>$0</td><td><b>—</b></td><td><span class="badge red">Zero attribution</span></td></tr><tr><td>Floral Collared Dress - 47910 - MNL</td><td>$25</td><td>$0</td><td><b>—</b></td><td><span class="badge red">Zero attribution</span></td></tr>
+</table>
+
+<div class="note"><b>💡 Amazon SP Strategy Note.</b> The largest spend lines this week — All Spring Products 2026 Auto ($523), All FBA Active Products Auto ($324) — are healthy at 29.5% and 14.4% ACOS respectively. The mid-spend tier shows the most volatility: All Smocked Bishop Dresses BM ($35 / 86.6%), All Smocked Shortalls SP DAT ($46 / 65.2%), Boys Polo Shirts MNL ($44 / 58.7%), All Catalog DAT2 ($30 / 75.7%) all flagged. Multiple zero-attribution campaigns ("All Ruffle Rompers MNL" $93, "Boys Polo Shirts -38513- MNL" $34, "All Shirts &amp; Shorts SP DAT" $25, "Floral Collared Dress 47910 MNL" $25) account for ~$200 of inefficient spend.</div>
+
+<div class="section-title">🔄 PPC ↔ QuickBooks Reconciliation</div>
+<div class="note">
+<b>Total channel costs Apr 13-19:</b> Ad spend $7,707 (Google $1,326 + Meta $3,849 + Amazon SP $2,532) + Faire commission/fees $1,424 + Amazon US fees $3,922 = <b>$13,053</b><br>
+<b>QuickBooks profitandloss.cogs (bookskeep variable Cost-of-Sales):</b> $4,409.60 for the same week<br>
+<b>Variance:</b> $8,643 dashboard-side higher than QB. The QB pull returned a single COGS line of $4,409.60 with revenue/expenses showing 0, suggesting either (a) bookskeep journal entries for Apr 13-19 are partially posted (FBA fees, paid spend) but other channel fees not yet booked, or (b) the profitandloss endpoint is rolling up only inventory-COGS and not the Amazon/Faire/PPC variable lines. Recommend pre-staging bookskeep account names ("Amazon COS", "Shopify COS", "Faire COS", "Ad Spend COS") so the reconciliation can complete automatically next week — same recommendation carried over from the Apr 20-26 dashboard.
+</div>
+
+<div class="section-title">💡 Action Items — Prioritized</div>
+<div class="actions">
+  <div class="action"><div class="action-num">1</div><div class="action-content"><div class="action-title">Pause Both Google PMax Campaigns — $742 of low/zero-attribution spend</div><div class="action-body">"PMax: PAM shopping only ALL" spent $373 with 0 conversions and 0 attributed value. "[EC] PMAX | Spring 2026" spent $370 at 0.73x ROAS. Combined $742 is single largest controllable inefficiency this week. The Apr 20-26 dashboard confirms this was acted on the following week (PMax pause referenced in the major-improvement flag) — flagging here for the historical record on this week's data.</div></div></div>
+  <div class="action"><div class="action-num">2</div><div class="action-content"><div class="action-title">Cut Meta Spend ~50% — Both Campaigns Below ROAS Floor</div><div class="action-body">Scale 1 ($2,456 / 1.45x) and Retargeting DPA ($1,380 / 1.10x) are both below 3.0x floor. Recommend immediate 50% cut to both, especially DPA which has higher CPM ($36 vs $27 Scale 1). Apr 20-26 actuals show Meta dropped to $2,016 the following week — directionally correct.</div></div></div>
+  <div class="action"><div class="action-num">3</div><div class="action-content"><div class="action-title">Pixel/Tag Audit — Long Overdue</div><div class="action-body">Combined G+Meta attributed value of $6,418 vs DTC actual net $5,647 — a 114% attribution coverage gap. Without an audit of the conversion pixel firing on the Shopify Order Status page, paid-DTC ROAS readings are unreliable for budget decisions. This is the single highest-leverage non-budget operational task.</div></div></div>
+  <div class="action"><div class="action-num">4</div><div class="action-content"><div class="action-title">Amazon SP — Pause Bottom-of-Barrel ($200+ inefficient)</div><div class="action-body">Pause or zero-budget: All Smocked Bishop Dresses BM (86.6% ACOS), All Catalog DAT2 (75.7%), All Smocked Shortalls SP DAT (65.2%), Boys Polo Shirts MNL Category Targeting (58.7%), Boys Polo Shirts MNL PT (57.3%), All Rompers SP DAT (52.2%), All Bishop Dress SP DAT (46.4%). Combined ~$197 of inefficient spend this week.</div></div></div>
+  <div class="action"><div class="action-num">5</div><div class="action-content"><div class="action-title">Amazon SP — Scale the Winners</div><div class="action-body">All FBA Active Products Auto ($324 / 14.4% ACOS / $2,247 attributed) and All Catalog Ghost Auto ($57 / 16.2% / $349) are clear scalers. Best-Selling Products Feb&Mar 2025 Auto at 35.1% — was 15.2% the following week, suggests volatility. White & Pink Cross Bishop Dress 32037 MNL ($34 / 20.6%) and Toddler Smocked Romper 31994 Auto ($36 / 15.2%) also healthy.</div></div></div>
+  <div class="action"><div class="action-num">6</div><div class="action-content"><div class="action-title">Wholesale Unit-Mix Review</div><div class="action-body">Wholesale net unit price fell to $8.72 from prior week's $12.53. Either lower-priced SKU mix or larger-quantity reorder discounts. Confirm whether this is intentional volume play or pricing erosion. 28 Faire orders is a strong order count — strategy is working, just need to retain unit economics.</div></div></div>
+  <div class="action"><div class="action-num">7</div><div class="action-content"><div class="action-title">Pre-Stage QB Bookskeep Accounts (carry-over)</div><div class="action-body">Same recommendation as last week's run — pre-stage account names "Amazon COS", "Shopify COS", "Faire COS", "Ad Spend COS" in QuickBooks so the dashboard's PPC ↔ COS reconciliation can complete cleanly. Variance this week $8,643 cannot be explained without account-level breakdown.</div></div></div>
+  <div class="action"><div class="action-num">8</div><div class="action-content"><div class="action-title">Settlement Backfill — Apr 13-19 Amazon Settlement Not Yet Posted</div><div class="action-body">Settlement v2 has rows posted Apr 1-10 and Apr 20-24 but not Apr 13-19. Either re-run this dashboard once Windsor pulls in the settlement closing around Apr 26, or accept doc-rate fees (14.5%/$4.79). Differential historically $200-400 either direction.</div></div></div>
+</div>
+
+<div class="footer">Tutu and Lulu CFO Dashboard · Apr 13–19, 2026 · Generated Apr 29, 2026 · Data: Windsor.ai (Shopify, Amazon Ads, Amazon SP, Google Ads, Meta), COGS file, QuickBooks<br>Landed COGS = Avg_cost ($5.56) + $1.08/unit shipping per project methodology · All figures USD · Amazon MX MXN→USD at BoC April 2026 monthly avg (USD/MXN ~17.0) · Amazon CA had no activity</div>
+</div>
+</body></html>
