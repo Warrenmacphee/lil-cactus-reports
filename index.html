@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lil Cactus — Reports Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F2EB;
+    --surface: #FDFAF5;
+    --border: #DDD8CC;
+    --text: #1A1812;
+    --muted: #7A7567;
+    --accent: #2D5016;
+    --accent-light: #4A7A28;
+    --accent-pale: #EBF2E4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── PASSWORD GATE ─── */
+  #gate {
+    position: fixed;
+    inset: 0;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  #gate-box {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  }
+
+  #gate-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  #gate-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  #gate-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    letter-spacing: 0.05em;
+    transition: border-color 0.15s;
+    margin-bottom: 0.75rem;
+  }
+
+  #gate-input:focus { border-color: var(--accent); }
+  #gate-input.error { border-color: #DC2626; animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  #gate-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  #gate-btn:hover { background: var(--accent-light); }
+
+  #gate-error {
+    font-size: 0.8rem;
+    color: #DC2626;
+    margin-top: 0.6rem;
+    min-height: 1.2em;
+  }
+
+  /* ─── MAIN APP ─── */
+  #app { display: none; }
+
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: #96BF48;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .header-meta {
+    font-size: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 64px);
+  }
+
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 0 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-section:last-child { border-bottom: none; }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 6px;
+    text-align: left;
+    transition: background 0.15s;
+  }
+
+  .filter-btn:hover { background: var(--accent-pale); }
+  .filter-btn.active { background: var(--accent-pale); color: var(--accent); font-weight: 600; }
+
+  .filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .filter-count { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  main { padding: 2rem; max-width: 900px; }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.03em;
+  }
+
+  .page-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-bar input {
+    flex: 1; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--text); outline: none;
+  }
+
+  .search-bar input::placeholder { color: var(--muted); }
+
+  .reports-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .report-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--card-accent, var(--accent));
+    border-radius: 3px 0 0 3px;
+  }
+
+  .report-card:hover {
+    border-color: var(--accent-light);
+    box-shadow: 0 4px 16px rgba(45,80,22,0.1);
+    transform: translateY(-1px);
+  }
+
+  .report-icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0; background: var(--accent-pale);
+  }
+
+  .report-info { flex: 1; min-width: 0; }
+
+  .report-name {
+    font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .report-meta { font-size: 0.78rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .report-tag {
+    font-size: 0.7rem; font-family: 'DM Mono', monospace;
+    padding: 0.2rem 0.5rem; border-radius: 4px;
+    font-weight: 500; letter-spacing: 0.03em; flex-shrink: 0;
+  }
+
+  .tag-shopify   { background: #EEF7DE; color: #4A7A00; }
+  .tag-amazon    { background: #FFF3E0; color: #C66900; }
+  .tag-ads       { background: #E8F0FE; color: #1557B0; }
+  .tag-financial { background: #F5F0FF; color: #6D28D9; }
+  .tag-general   { background: #F1F5F9; color: #475569; }
+
+  .report-arrow { color: var(--muted); font-size: 1rem; transition: transform 0.15s; }
+  .report-card:hover .report-arrow { transform: translateX(3px); color: var(--accent); }
+
+  .empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-text { font-size: 0.9rem; }
+
+  .last-updated {
+    margin-top: 2rem; padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted);
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div id="gate-box">
+    <div id="gate-logo">Lil Cactus</div>
+    <div id="gate-sub">Reports Hub · Internal Access</div>
+    <input id="gate-input" type="password" placeholder="Enter password" autocomplete="current-password">
+    <button id="gate-btn" onclick="checkPassword()">Enter</button>
+    <div id="gate-error"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <header>
+    <div class="logo"><span class="logo-dot"></span> Lil Cactus Reports</div>
+    <div class="header-meta">INTERNAL USE ONLY</div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Filter by Channel</div>
+        <button class="filter-btn active" onclick="filterReports('all', this)">
+          <span class="filter-dot" style="background:#2D5016"></span>All Reports
+          <span class="filter-count" id="count-all">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('shopify', this)">
+          <span class="filter-dot" style="background:#96BF48"></span>Shopify DTC
+          <span class="filter-count" id="count-shopify">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('amazon', this)">
+          <span class="filter-dot" style="background:#FF9900"></span>Amazon
+          <span class="filter-count" id="count-amazon">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('ads', this)">
+          <span class="filter-dot" style="background:#4285F4"></span>Google Ads
+          <span class="filter-count" id="count-ads">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('financial', this)">
+          <span class="filter-dot" style="background:#8B5CF6"></span>Financial / QBO
+          <span class="filter-count" id="count-financial">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('general', this)">
+          <span class="filter-dot" style="background:#64748B"></span>General / Other
+          <span class="filter-count" id="count-general">0</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Sort By</div>
+        <button class="filter-btn active" onclick="sortReports('date-desc', this)">↓ Newest First</button>
+        <button class="filter-btn" onclick="sortReports('date-asc', this)">↑ Oldest First</button>
+        <button class="filter-btn" onclick="sortReports('name', this)">A–Z Name</button>
+      </div>
+    </aside>
+
+    <main>
+      <h1 class="page-title">Reports Hub</h1>
+      <p class="page-subtitle">All Cowork-generated dashboards in one place. Click any report to open it.</p>
+
+      <div class="search-bar">
+        <svg width="16" height="16" fill="none" stroke="#7A7567" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search reports…" oninput="searchReports(this.value)">
+      </div>
+
+      <div class="reports-list" id="reportsList"></div>
+
+      <div class="empty hidden" id="emptyState">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">No reports match your filter.</div>
+      </div>
+
+      <div class="last-updated" id="lastUpdated"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ─── AUTH ──────────────────────────────────────────────────────────
+const HASH = 'a1b0dd49a40d5efff611e30ef75aded8e386d773aae9a31b592ab45c34effc4b';
+const SESSION_KEY = 'lc_reports_auth';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPassword() {
+  const input = document.getElementById('gate-input');
+  const error = document.getElementById('gate-error');
+  const h = await sha256(input.value);
+  if (h === HASH) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render();
+  } else {
+    input.classList.add('error');
+    error.textContent = 'Incorrect password. Try again.';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+
+document.getElementById('gate-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+// ─── REPORT REGISTRY ───────────────────────────────────────────────
+// Cowork appends a new entry to this array each time a report is generated.
+// Icons: Shopify=🛍️  Amazon=📦  Google Ads=📊  Financial=💰  General=📄
+const REPORTS = [
+  // {
+  //   name: "Sales Channel Dashboard — Apr 25 2026",
+  //   file: "sales-channel-2026-04-25.html",
+  //   date: "2026-04-25",
+  //   type: "shopify",
+  //   icon: "🛍️",
+  //   description: "Shopify DTC + Amazon daily sales summary"
+  // }
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────
+let activeFilter = 'all';
+let activeSort = 'date-desc';
+let searchQuery = '';
+
+function render() {
+  let items = [...REPORTS];
+  if (activeFilter !== 'all') items = items.filter(r => r.type === activeFilter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    items = items.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      (r.description || '').toLowerCase().includes(q)
+    );
+  }
+  if (activeSort === 'date-desc') items.sort((a,b) => b.date.localeCompare(a.date));
+  if (activeSort === 'date-asc')  items.sort((a,b) => a.date.localeCompare(b.date));
+  if (activeSort === 'name')      items.sort((a,b) => a.name.localeCompare(b.name));
+
+  const list  = document.getElementById('reportsList');
+  const empty = document.getElementById('emptyState');
+
+  if (items.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    list.innerHTML = items.map(r => `
+      <a class="report-card" href="${r.file}">
+        <div class="report-icon">${r.icon || '📄'}</div>
+        <div class="report-info">
+          <div class="report-name">${r.name}</div>
+          <div class="report-meta">${formatDate(r.date)}${r.description ? ' · ' + r.description : ''}</div>
+        </div>
+        <span class="report-tag tag-${r.type}">${typeLabel(r.type)}</span>
+        <span class="report-arrow">→</span>
+      </a>
+    `).join('');
+  }
+
+  updateCounts();
+  updateFooter();
+}
+
+function typeLabel(t) {
+  return { shopify:'Shopify', amazon:'Amazon', ads:'Google Ads', financial:'Financial', general:'General' }[t] || t;
+}
+
+function formatDate(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function updateCounts() {
+  document.getElementById('count-all').textContent = REPORTS.length;
+  ['shopify','amazon','ads','financial','general'].forEach(t => {
+    const el = document.getElementById('count-' + t);
+    if (el) el.textContent = REPORTS.filter(r => r.type === t).length;
+  });
+}
+
+function updateFooter() {
+  const el = document.getElementById('lastUpdated');
+  if (REPORTS.length === 0) {
+    el.textContent = 'No reports yet — Cowork will populate this index automatically.';
+    return;
+  }
+  const latest = [...REPORTS].sort((a,b) => b.date.localeCompare(a.date))[0];
+  el.textContent = `Last report: ${formatDate(latest.date)} · ${REPORTS.length} total report${REPORTS.length !== 1 ? 's' : ''}`;
+}
+
+function filterReports(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('aside .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function sortReports(sort, btn) {
+  activeSort = sort;
+  document.querySelectorAll('aside .sidebar-section:last-child .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function searchReports(val) {
+  searchQuery = val;
+  render();
+}
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') render();
+</script>
+</body>
+</html>
