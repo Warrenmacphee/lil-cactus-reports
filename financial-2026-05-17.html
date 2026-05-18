@@ -1,0 +1,404 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Tutu and Lulu — CFO Dashboard — May 11–17, 2026</title><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; color: #1f2937; padding: 24px; line-height: 1.5; }
+.container { max-width: 1280px; margin: 0 auto; }
+.header { background: #1f2937; color: white; padding: 24px 28px; border-radius: 12px 12px 0 0; }
+.header h1 { font-size: 24px; font-weight: 700; }
+.header .meta { font-size: 13px; color: #9ca3af; margin-top: 6px; }
+.tabs { background: #374151; padding: 12px 28px; color: #e5e7eb; font-size: 13px; border-radius: 0 0 12px 12px; margin-bottom: 24px; }
+.tabs span { margin-right: 18px; }
+.section-title { font-size: 16px; font-weight: 600; margin: 24px 0 12px; color: #1f2937; }
+.flag { padding: 16px 20px; border-left: 4px solid; border-radius: 6px; margin-bottom: 12px; background: white; }
+.flag.red { border-color: #ef4444; background: #fef2f2; }
+.flag.yellow { border-color: #f59e0b; background: #fffbeb; }
+.flag.blue { border-color: #3b82f6; background: #eff6ff; }
+.flag.green { border-color: #22c55e; background: #f0fdf4; }
+.flag.gray { border-color: #6b7280; background: #f9fafb; }
+.flag-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.flag-body { font-size: 13px; color: #374151; line-height: 1.55; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kpi { background: white; padding: 16px 18px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.kpi.unavailable { background: #f9fafb; border: 1.5px dashed #d1d5db; }
+.kpi-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-value { font-size: 28px; font-weight: 700; margin: 6px 0; }
+.kpi-value.na { font-size: 22px; color: #9ca3af; }
+.kpi-sub { font-size: 11px; color: #6b7280; }
+.kpi-status { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-top: 6px; font-weight: 600; }
+.kpi-status.green { background: #dcfce7; color: #166534; }
+.kpi-status.red { background: #fee2e2; color: #991b1b; }
+.kpi-status.yellow { background: #fef3c7; color: #92400e; }
+.kpi-status.gray { background: #f3f4f6; color: #374151; }
+.value-green { color: #16a34a; }
+.value-red { color: #dc2626; }
+.value-yellow { color: #d97706; }
+.value-gray { color: #9ca3af; }
+.channel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.channel { background: white; border-radius: 8px; padding: 18px; border-top: 4px solid #6366f1; }
+.channel.dtc { border-top-color: #6366f1; }
+.channel.ws { border-top-color: #10b981; }
+.channel.amzn { border-top-color: #f59e0b; }
+.channel.unavail { background: #f9fafb; border-top-color: #9ca3af; }
+.channel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.channel-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+.channel-row.total { font-weight: 600; border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 6px; }
+.neg { color: #dc2626; }
+.pos { color: #16a34a; }
+.gray-text { color: #9ca3af; font-style: italic; }
+table { width: 100%; background: white; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04); margin-bottom: 16px; font-size: 12.5px; }
+th { background: #1f2937; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 9px 12px; border-bottom: 1px solid #e5e7eb; }
+tr:last-child td { border-bottom: none; }
+tr.total { background: #f3f4f6; font-weight: 600; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.badge.red { background: #fee2e2; color: #991b1b; }
+.badge.yellow { background: #fef3c7; color: #92400e; }
+.badge.green { background: #dcfce7; color: #166534; }
+.badge.gray { background: #f3f4f6; color: #374151; }
+.note { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.note.warn { background: #fffbeb; border-left-color: #f59e0b; }
+.note.danger { background: #fef2f2; border-left-color: #ef4444; }
+.actions { background: white; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+.action { padding: 10px 0; border-bottom: 1px solid #f3f4f6; display: flex; gap: 14px; align-items: flex-start; font-size: 13px; }
+.action:last-child { border-bottom: none; }
+.action-num { background: #1f2937; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+.action-content { flex: 1; }
+.action-title { font-weight: 600; margin-bottom: 3px; }
+.action-body { color: #4b5563; font-size: 12.5px; line-height: 1.55; }
+.connector-banner { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 18px 22px; margin-bottom: 20px; }
+.connector-banner h3 { font-size: 15px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+.connector-banner p { font-size: 13px; color: #78350f; line-height: 1.6; }
+.connector-banner ul { font-size: 13px; color: #78350f; margin-left: 20px; margin-top: 6px; line-height: 1.7; }
+.footer { text-align: center; color: #6b7280; font-size: 11px; padding: 20px 0 4px; line-height: 1.7; }
+.prev-week { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; font-size: 12.5px; }
+.prev-week h4 { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+.prev-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.prev-item { text-align: center; }
+.prev-label { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; }
+.prev-val { font-size: 15px; font-weight: 700; color: #1f2937; margin-top: 2px; }
+@media print { body { padding: 0; background: white; } .kpi-grid { gap: 8px; } }
+</style></head><body>
+<script>
+const REPORT_META = {
+  name:        "CFO Dashboard — May 11–17, 2026",
+  date:        "2026-05-17",
+  type:        "financial",
+  description: "Weekly P&L: DTC + Wholesale + Amazon — contribution margin, ad efficiency, action items"
+};
+</script>
+<style id="lc-nav-styles">
+  #lc-nav { font-family: 'DM Sans', sans-serif; background: #2D5016; color: white; padding: 0 1.5rem; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  #lc-nav a { color: white; text-decoration: none; }
+  #lc-nav-left { display: flex; align-items: center; gap: 1rem; }
+  #lc-nav-home { font-size: 0.82rem; opacity: 0.75; transition: opacity 0.15s; }
+  #lc-nav-home:hover { opacity: 1; }
+  #lc-nav-divider { color: rgba(255,255,255,0.3); }
+  #lc-nav-title { font-size: 0.9rem; font-weight: 600; }
+  #lc-nav-right { display: flex; align-items: center; gap: 1rem; }
+  #lc-nav-date { font-family: 'DM Mono', monospace; font-size: 0.7rem; opacity: 0.65; letter-spacing: 0.05em; }
+  #lc-nav-tag { font-size: 0.65rem; font-family: 'DM Mono', monospace; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+  .lc-tag-financial { background: #8B5CF6; color: white; }
+  #lc-nav-print { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 5px; cursor: pointer; }
+  @media print { #lc-nav { display: none; } }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<nav id="lc-nav">
+  <div id="lc-nav-left">
+    <a id="lc-nav-home" href="../index.html">← Reports Hub</a>
+    <span id="lc-nav-divider">/</span>
+    <span id="lc-nav-title"></span>
+  </div>
+  <div id="lc-nav-right">
+    <span id="lc-nav-date"></span>
+    <span id="lc-nav-tag"></span>
+    <button id="lc-nav-print" onclick="window.print()">⎙ Print / PDF</button>
+  </div>
+</nav>
+<script>
+(function() {
+  const m = window.REPORT_META || {};
+  document.getElementById('lc-nav-title').textContent = m.name || 'Report';
+  if (m.date) {
+    const d = new Date(m.date + 'T12:00:00');
+    document.getElementById('lc-nav-date').textContent = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  const tag = document.getElementById('lc-nav-tag');
+  const labels = { shopify:'Shopify', amazon:'Amazon', ads:'Google Ads', financial:'Financial', general:'General' };
+  tag.textContent = labels[m.type] || m.type || '';
+  tag.className = 'lc-tag-' + (m.type || 'general');
+  if (m.name && m.date) document.title = m.name + ' — ' + m.date;
+})();
+</script>
+
+<div class="container">
+<div class="header">
+  <h1>🌵 Tutu and Lulu — CFO Dashboard</h1>
+  <div class="meta">📅 Week of May 11 – 17, 2026 &nbsp;·&nbsp; 🔄 Generated May 17, 2026 (automated run) &nbsp;·&nbsp; ⚠️ CONNECTOR UNAVAILABLE — Live data not retrieved this run</div>
+</div>
+<div class="tabs">
+  <span>⚠️ Flags</span><span>📊 Summary</span><span>🏪 Channels</span><span>🔵 Google Ads</span><span>🟦 Meta Ads</span><span>🟠 Amazon SP</span><span>💡 Actions</span>
+</div>
+
+<div class="connector-banner">
+  <h3>⚠️ Automated Run — Windsor.ai Connectors Not Available</h3>
+  <p>This report was generated by the weekly scheduled task on May 17, 2026. The Windsor.ai MCP connectors that supply live data for Google Ads, Meta Ads, Shopify DTC, Shopify Wholesale, Amazon Ads, and Amazon SP were <strong>not active</strong> in this session. As a result, actual week-of-May-11 figures cannot be populated.</p>
+  <ul>
+    <li>COGS methodology is confirmed: $5.56 avg supplier cost + $1.08 inbound shipping = <strong>$6.64/unit landed</strong> (12,393 active SKUs)</li>
+    <li>Prior week reference (Apr 27–May 3) is embedded below for context</li>
+    <li>All dashboard cards show "— N/A —" where live data is required</li>
+    <li><strong>To fix:</strong> Re-run manually with Windsor.ai connectors active, or ensure the scheduled task session has connectors enabled</li>
+  </ul>
+</div>
+
+<div class="note warn"><b>📋 What this report contains.</b> Structure, methodology, KPI thresholds, and prior-week context are all intact. The only missing element is the week-of-May-11 actual figures from the Windsor.ai feeds (Shopify DTC + Wholesale, Google Ads, Meta Ads, Amazon Ads, Amazon SP sales + settlement). COGS file was read successfully — $6.64/unit blended landed cost confirmed current.</div>
+
+<div class="section-title">⚠️ Critical Flags</div>
+
+<div class="flag gray">
+  <div class="flag-title">⚪ Data Not Available — Automated Run Connector Failure</div>
+  <div class="flag-body">Windsor.ai connectors were not active during this scheduled run. No channel data, ad spend, or revenue figures could be pulled for May 11–17. The flags section will be populated on re-run with live connectors. Carry-forward watch items from last week: (1) Google "Pam Shopping" ROAS was 1.14x for 3 consecutive weeks — decision on pause/cut should have been made by May 7. (2) Meta Scale 1 ROAS at 1.86x — below 3.0x floor. (3) PMax TEST campaign in learning phase — should have cleared learning by now (~2 weeks). (4) Amazon bottom-5 SP campaign pauses should be confirmed.</div>
+</div>
+
+<div class="flag yellow">
+  <div class="flag-title">🟡 Carry-Forward: Pixel/Tag Audit — Overdue Week 4</div>
+  <div class="flag-body">As of last week (May 3), Google was tracking 20 conversions vs 104 actual DTC orders — a severe undercount driving bad PPC optimization signals. If this hasn't been fixed, PMax learning is distorted. This is the highest-priority unblocked action item and now 4 weeks overdue.</div>
+</div>
+
+<div class="flag blue">
+  <div class="flag-title">🔵 COGS Methodology — Confirmed Current (May 17, 2026)</div>
+  <div class="flag-body">COGS file read successfully: 12,393 active SKUs, avg supplier cost $5.56, landed COGS $6.64/unit ($5.56 + $1.08 inbound). Avg retail $38.28, avg wholesale $15.34. Pre-fee gross margins: retail 82.7%, wholesale 56.7%. Methodology is unchanged from prior weeks.</div>
+</div>
+
+<div class="section-title">📊 Weekly Summary — May 11–17, 2026</div>
+
+<div class="note danger"><b>⚠️ All KPI cards below require live connector data.</b> Figures show "N/A" — this is not a data error, it reflects the connector outage in this automated session. Re-run with Windsor.ai active to populate.</div>
+
+<div class="kpi-grid">
+  <!-- Row 1 -->
+  <div class="kpi unavailable">
+    <div class="kpi-label">Total Gross Revenue</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Requires: Shopify DTC + Wholesale + Amazon SP connectors</div>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Total Net Revenue</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: $21,297 · Requires live connectors</div>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Total Gross Margin</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: 62.8% · Target ≥55%</div>
+    <span class="kpi-status gray">Connector Unavailable</span>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Total Units Sold</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: 1,173 units (DTC 201 · WS 659 · AMZ 313)</div>
+  </div>
+  <!-- Row 2 -->
+  <div class="kpi unavailable">
+    <div class="kpi-label">Total Ad Spend</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: $4,747 (Google $772 · Meta $2,190 · AMZ SP $1,784)</div>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Contribution Amount</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: $8,631 · Requires live connectors</div>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Contribution Margin</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: 40.5% · Target ≥30%</div>
+    <span class="kpi-status gray">Connector Unavailable</span>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Expected Profit</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Contribution – Wkly Operating est ($6,478 for both T&amp;L and LC, NOT including Owner Compensation nor Debt Repay)</div>
+    <span class="kpi-status gray">Connector Unavailable</span>
+  </div>
+  <!-- Row 3 (3 cards) -->
+  <div class="kpi unavailable">
+    <div class="kpi-label">MER (Marketing Efficiency)</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: 4.49x · Target ≥4.0x · Floor 2.5x</div>
+    <span class="kpi-status gray">Connector Unavailable</span>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Blended ROAS (G + Meta)</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: 1.86x — was below 3.0x floor</div>
+    <span class="kpi-status gray">Connector Unavailable</span>
+  </div>
+  <div class="kpi unavailable">
+    <div class="kpi-label">Amazon ACOS</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Prior week: 29.7% · Target &lt;20% · Flag &gt;30%</div>
+    <span class="kpi-status gray">Connector Unavailable</span>
+  </div>
+</div>
+
+<div class="section-title">📅 Prior Week Reference — April 27 – May 3, 2026</div>
+<div class="prev-week">
+  <h4>Last completed dashboard (May 3, 2026) — use for week-over-week comparison when re-run with live data</h4>
+  <div class="prev-grid">
+    <div class="prev-item"><div class="prev-label">Gross Revenue</div><div class="prev-val">$27,206</div></div>
+    <div class="prev-item"><div class="prev-label">Net Revenue</div><div class="prev-val">$21,297</div></div>
+    <div class="prev-item"><div class="prev-label">Gross Margin</div><div class="prev-val">62.8%</div></div>
+    <div class="prev-item"><div class="prev-label">Units Sold</div><div class="prev-val">1,173</div></div>
+    <div class="prev-item"><div class="prev-label">Ad Spend</div><div class="prev-val">$4,747</div></div>
+    <div class="prev-item"><div class="prev-label">Contribution $</div><div class="prev-val">$8,631</div></div>
+    <div class="prev-item"><div class="prev-label">Contribution %</div><div class="prev-val">40.5%</div></div>
+    <div class="prev-item"><div class="prev-label">Expected Profit</div><div class="prev-val">$2,153</div></div>
+    <div class="prev-item"><div class="prev-label">MER</div><div class="prev-val">4.49x</div></div>
+    <div class="prev-item"><div class="prev-label">G+Meta ROAS</div><div class="prev-val">1.86x ⚠️</div></div>
+    <div class="prev-item"><div class="prev-label">AMZ ACOS</div><div class="prev-val">29.7%</div></div>
+    <div class="prev-item"><div class="prev-label">DTC CM%</div><div class="prev-val">15.1% ⚠️</div></div>
+  </div>
+</div>
+
+<div class="section-title">🏪 Channel P&amp;L — Landed COGS Confirmed ($6.64/unit = $5.56 supplier + $1.08 inbound)</div>
+<div class="channel-grid">
+  <div class="channel unavail">
+    <h3>🛒 Shopify DTC (lil-cactus)</h3>
+    <div class="channel-row"><span>Gross Revenue</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Discounts</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Refunds</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Units Sold (net)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>COGS (units × $6.64)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Shopify Fee (~2.5%)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Ad Spend (Google + Meta)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row total"><span>Contribution Margin</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row" style="margin-top:8px; font-size:11px; color:#9ca3af;">Requires: Shopify DTC + Google Ads + Meta connectors</div>
+  </div>
+  <div class="channel unavail">
+    <h3>🏬 Shopify Wholesale / Faire</h3>
+    <div class="channel-row"><span>Gross Revenue (orders)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Discounts</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Faire Commission (actual)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Faire Payment Processing</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Returns / Refunds</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Units Shipped (net)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>COGS (units × $6.64)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row total"><span>Contribution Margin</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row" style="margin-top:8px; font-size:11px; color:#9ca3af;">Requires: Shopify Wholesale connector; read FAIRE-COMMISSION + FAIRE-PAYMENT-PROCESSING-FEE line items</div>
+  </div>
+  <div class="channel unavail">
+    <h3>🟠 Amazon (US) — Settlement Rate-Based</h3>
+    <div class="channel-row"><span>Gross Sales (ordered)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Referral Commission (14.5%)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>FBA Fee (units × $4.10)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Other Fees (units × $0.36)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Units Ordered</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>COGS (units × $6.64)</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row"><span>Amazon SP Ad Spend</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row total"><span>Contribution Margin</span><span class="gray-text">N/A</span></div>
+    <div class="channel-row" style="margin-top:8px; font-size:11px; color:#9ca3af;">Requires: Amazon SP (AIFI5MSLN2DR6-US) connector; settlement report for actual fees</div>
+  </div>
+</div>
+
+<table>
+  <tr><th>Channel</th><th>Net Revenue</th><th>COGS</th><th>Gross Margin</th><th>GM%</th><th>Ad Spend</th><th>Contribution Margin</th><th>CM%</th><th>Status</th></tr>
+  <tr><td><b>Shopify DTC</b></td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td><span class="badge gray">No Data</span></td></tr>
+  <tr><td><b>Wholesale / Faire</b></td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td><span class="badge gray">No Data</span></td></tr>
+  <tr><td><b>Amazon (US)</b></td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td><span class="badge gray">No Data</span></td></tr>
+  <tr class="total"><td>TOTAL</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td class="gray-text">N/A</td><td><span class="badge gray">No Data</span></td></tr>
+</table>
+
+<div class="section-title">🔵 Google Ads — Lil Cactus (139-095-5762)</div>
+<div class="note warn"><b>⚠️ Google Ads connector not available.</b> Prior-week watch items: "Pam Shopping" was 1.14x ROAS for 3 consecutive weeks (decision on pause due by May 7). PMax TEST was in learning phase — should have data by now. Pixel/tag audit remains critically overdue (Week 4).</div>
+<div class="kpi-grid">
+  <div class="kpi unavailable"><div class="kpi-label">Total Spend</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: $772</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Attributed Conv. Value</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: $1,163 (pixel undercount)</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Blended ROAS</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: 1.51x — below 3.0x floor</div><span class="kpi-status gray">No Data</span></div>
+  <div class="kpi unavailable"><div class="kpi-label">Total Clicks</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: 1,077</div></div>
+</div>
+
+<div class="section-title">🟦 Meta Ads — LilCactusOfficial (6120962791328743)</div>
+<div class="note warn"><b>⚠️ Meta Ads connector not available.</b> Prior-week watch items: Scale 1 at 1.86x ROAS (below 3.0x floor). 4th of July campaign was on day 1 last week — should have first meaningful ROAS data by now. Monitor CPM and purchase volume.</div>
+<div class="kpi-grid">
+  <div class="kpi unavailable"><div class="kpi-label">Total Spend</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: $2,190</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Reported Purchases</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: 54 (pixel gap — iOS14 applies)</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Reported Conv. Value</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: $4,355</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Reported ROAS</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: 1.99x — below floor</div><span class="kpi-status gray">No Data</span></div>
+</div>
+
+<div class="section-title">🟠 Amazon Sponsored Products — Tutu and Lulu Fashion (692643974795718)</div>
+<div class="note warn"><b>⚠️ Amazon Ads connector not available.</b> Prior-week watch items: Blended ACOS 29.7% (just under 30% flag). Recommended pausing bottom-5 campaigns ($300/wk waste): Gingham 34312 MNL (212.4% ACOS), All Rompers DAT (164.3%), Baseball Bishop 32557 (141.5%), Blue Big Brother 38090 ($0 attribution), Toddler Romper Broad (85.6%). Confirm whether these were paused. Top performers: All Catalog Auto (8.75x), Ghost Auto (7.54x), White/Pink Cross Bishop 32037 (5.27x).</div>
+<div class="kpi-grid">
+  <div class="kpi unavailable"><div class="kpi-label">Total SP Spend</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: $1,784 (down 13% wow)</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Attributed Sales (14d)</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: $6,000</div></div>
+  <div class="kpi unavailable"><div class="kpi-label">Overall ACOS</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: 29.7% — approaching flag</div><span class="kpi-status gray">No Data</span></div>
+  <div class="kpi unavailable"><div class="kpi-label">Amazon SP ROAS</div><div class="kpi-value na">N/A</div><div class="kpi-sub">Prior week: 3.36x (up from 3.18x)</div></div>
+</div>
+
+<div class="note"><b>💡 Amazon SP — Watch: Bottom-5 pause should be confirmed.</b> If bottom-5 campaigns ($300/wk inefficient spend) were paused last week per Action Item #2, this week's ACOS should improve materially. Reallocation to All Catalog Auto and Ghost Auto should show in attributed sales. If not paused, reissue the recommendation with urgency.</div>
+
+<div class="section-title">💡 Action Items — Carry-Forward from May 3 + Connector Fix</div>
+<div class="actions">
+  <div class="action">
+    <div class="action-num">1</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Re-Run Dashboard with Live Windsor.ai Connectors (Blocking)</div>
+      <div class="action-body">This automated run could not pull any live data because Windsor.ai MCP connectors were not active in the scheduled session. To get the May 11–17 figures, re-run manually in a Cowork session with connectors enabled. The COGS file is current ($6.64/unit confirmed). All connector IDs and methodology are documented in TutuLulu_CFO_Project_Context_v5.docx.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">2</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Pixel/Tag Audit — Week 4 Overdue (Critically Blocking)</div>
+      <div class="action-body">For 4 consecutive weeks, Google tracked ~20 conversions vs 100+ actual DTC orders. PMax learning launched May 2 with broken tracking signals — now 2 weeks in and likely producing distorted bid decisions. Every additional week without a fix compounds the optimization damage. This must be actioned this week, no exceptions.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">3</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Confirm Amazon SP Bottom-5 Campaign Pauses</div>
+      <div class="action-body">Action Item from May 3: pause Gingham 34312 MNL, All Rompers SP-DAT, Baseball Bishop 32557 MNL, Blue Big Brother 38090 MNL, Toddler Romper Broad — combined ~$300/wk waste. Verify in Amazon console that these are paused. If not, do so immediately and confirm ACOS improves in next run.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">4</div>
+    <div class="action-content">
+      <div class="action-title">🟡 Google PMax TEST — Post-Learning Evaluation Due</div>
+      <div class="action-body">PMax: Pam TEST launched May 2. After 2 weeks of learning (standard Google PMax window), this campaign should now have enough data for a real ROAS read. Pull current performance data. If still below 3.0x ROAS, reduce budget or pause pending pixel fix. Do not continue scaling a PMax without confirmed conversion accuracy.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">5</div>
+    <div class="action-content">
+      <div class="action-title">🟡 4th of July Campaign — First ROAS Check (Day 14)</div>
+      <div class="action-body">Meta 4th of July campaign launched May 3. Now at ~2 weeks of data. Check actual ROAS vs 3.0x floor. If below 2.0x ROAS, pause and reallocate to Scale 1. If above 3.0x, consider scaling budget for the July 4 window. CPM was $38.67 on launch — monitor for decay or improvement.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">6</div>
+    <div class="action-content">
+      <div class="action-title">🟡 QuickBooks Bookskeep Reconciliation — Still Blocked</div>
+      <div class="action-body">Windsor.ai QB connector still only exposes account_name + date fields. Recommend pre-staging a Bookskeep CSV export for the reconciliation step, or setting up a direct QuickBooks export of Cost of Sales accounts. Without this, PPC spend vs. variable COS reconciliation cannot be completed — carry-forward from multiple weeks.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">7</div>
+    <div class="action-content">
+      <div class="action-title">🔧 Fix Scheduled Task Connector Access</div>
+      <div class="action-body">The automated scheduled task does not have Windsor.ai connectors available in its execution context. To fix this for next week: confirm that connectors are enabled for scheduled task sessions in Cowork settings, or switch to a manual trigger that runs in a user session where connectors are active. Consider adding an explicit connector-check step at the start of each run.</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Tutu and Lulu CFO Dashboard · May 11–17, 2026 · Generated May 17, 2026 (automated run — connector unavailable)<br>
+  Landed COGS = Avg_cost ($5.56) + $1.08/unit shipping per project methodology · 12,393 active SKUs confirmed from ProductCoGs-Initial Load (Apr17-2026).xlsx<br>
+  Amazon fees methodology: 14.5% referral + $4.10/unit FBA + $0.36/unit other (settlement-derived) · All figures USD · Windsor.ai feeds unavailable this run<br>
+  Prior week reference (Apr 27–May 3): Net Rev $21,297 · CM 40.5% · Expected Profit $2,153 · G+Meta ROAS 1.86x · AMZ ACOS 29.7%
+</div>
+</div>
+</body></html>
