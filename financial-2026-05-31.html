@@ -1,0 +1,514 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Tutu and Lulu — CFO Dashboard — May 25–31, 2026</title><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; color: #1f2937; padding: 24px; line-height: 1.5; }
+.container { max-width: 1280px; margin: 0 auto; }
+.header { background: #1f2937; color: white; padding: 24px 28px; border-radius: 12px 12px 0 0; }
+.header h1 { font-size: 24px; font-weight: 700; }
+.header .meta { font-size: 13px; color: #9ca3af; margin-top: 6px; }
+.tabs { background: #374151; padding: 12px 28px; color: #e5e7eb; font-size: 13px; border-radius: 0 0 12px 12px; margin-bottom: 24px; }
+.tabs span { margin-right: 18px; }
+.section-title { font-size: 16px; font-weight: 600; margin: 24px 0 12px; color: #1f2937; }
+.flag { padding: 16px 20px; border-left: 4px solid; border-radius: 6px; margin-bottom: 12px; background: white; }
+.flag.red { border-color: #ef4444; background: #fef2f2; }
+.flag.yellow { border-color: #f59e0b; background: #fffbeb; }
+.flag.blue { border-color: #3b82f6; background: #eff6ff; }
+.flag.green { border-color: #22c55e; background: #f0fdf4; }
+.flag.gray { border-color: #6b7280; background: #f9fafb; }
+.flag-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.flag-body { font-size: 13px; color: #374151; line-height: 1.55; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kpi { background: white; padding: 16px 18px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.kpi.unavailable { background: #f9fafb; border: 1.5px dashed #d1d5db; }
+.kpi-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-value { font-size: 28px; font-weight: 700; margin: 6px 0; }
+.kpi-value.na { font-size: 22px; color: #9ca3af; }
+.kpi-sub { font-size: 11px; color: #6b7280; }
+.kpi-status { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-top: 6px; font-weight: 600; }
+.kpi-status.green { background: #dcfce7; color: #166534; }
+.kpi-status.red { background: #fee2e2; color: #991b1b; }
+.kpi-status.yellow { background: #fef3c7; color: #92400e; }
+.kpi-status.gray { background: #f3f4f6; color: #374151; }
+.value-green { color: #16a34a; }
+.value-red { color: #dc2626; }
+.value-yellow { color: #d97706; }
+.value-gray { color: #9ca3af; }
+.channel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.channel { background: white; border-radius: 8px; padding: 18px; border-top: 4px solid #6366f1; }
+.channel.dtc { border-top-color: #6366f1; }
+.channel.ws { border-top-color: #10b981; }
+.channel.amzn { border-top-color: #f59e0b; }
+.channel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.channel-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+.channel-row.total { font-weight: 600; border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 6px; }
+.neg { color: #dc2626; }
+.pos { color: #16a34a; }
+.gray-text { color: #9ca3af; font-style: italic; }
+table { width: 100%; background: white; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04); margin-bottom: 16px; font-size: 12.5px; }
+th { background: #1f2937; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 9px 12px; border-bottom: 1px solid #e5e7eb; }
+tr:last-child td { border-bottom: none; }
+tr.total { background: #f3f4f6; font-weight: 600; }
+tr.highlight-green { background: #f0fdf4; }
+tr.highlight-red { background: #fef2f2; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.badge.red { background: #fee2e2; color: #991b1b; }
+.badge.yellow { background: #fef3c7; color: #92400e; }
+.badge.green { background: #dcfce7; color: #166534; }
+.badge.gray { background: #f3f4f6; color: #374151; }
+.note { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.note.warn { background: #fffbeb; border-left-color: #f59e0b; }
+.note.danger { background: #fef2f2; border-left-color: #ef4444; }
+.note.success { background: #f0fdf4; border-left-color: #22c55e; }
+.actions { background: white; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+.action { padding: 10px 0; border-bottom: 1px solid #f3f4f6; display: flex; gap: 14px; align-items: flex-start; font-size: 13px; }
+.action:last-child { border-bottom: none; }
+.action-num { background: #1f2937; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+.action-content { flex: 1; }
+.action-title { font-weight: 600; margin-bottom: 3px; }
+.action-body { color: #4b5563; font-size: 12.5px; line-height: 1.55; }
+.connector-banner { background: #fef2f2; border: 2px solid #ef4444; border-radius: 8px; padding: 18px 22px; margin-bottom: 20px; }
+.connector-banner h3 { font-size: 15px; font-weight: 700; color: #991b1b; margin-bottom: 8px; }
+.connector-banner p { font-size: 13px; color: #7f1d1d; line-height: 1.6; }
+.connector-banner ul { font-size: 13px; color: #7f1d1d; margin-left: 20px; margin-top: 6px; line-height: 1.7; }
+.footer { text-align: center; color: #6b7280; font-size: 11px; padding: 20px 0 4px; line-height: 1.7; }
+.prev-week { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; font-size: 12.5px; }
+.prev-week h4 { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+.prev-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.prev-item { text-align: center; }
+.prev-label { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; }
+.prev-val { font-size: 15px; font-weight: 700; color: #1f2937; margin-top: 2px; }
+.alert-banner { background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 16px 22px; margin-bottom: 20px; }
+.alert-banner h3 { font-size: 15px; font-weight: 700; color: #991b1b; margin-bottom: 8px; }
+.alert-banner p { font-size: 13px; color: #7f1d1d; line-height: 1.6; }
+@media print { body { padding: 0; background: white; } .kpi-grid { gap: 8px; } }
+</style></head><body>
+
+<script>
+const REPORT_META = {
+  name:        "CFO Dashboard — May 25–31, 2026",
+  date:        "2026-05-31",
+  type:        "financial",
+  description: "Weekly P&L: DTC + Wholesale + Amazon — live data, negative profit week, Meta ROAS blind spot"
+};
+</script>
+<style id="lc-nav-styles">
+  #lc-nav { font-family: 'DM Sans', sans-serif; background: #2D5016; color: white; padding: 0 1.5rem; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  #lc-nav a { color: white; text-decoration: none; }
+  #lc-nav-left { display: flex; align-items: center; gap: 1rem; }
+  #lc-nav-home { font-size: 0.82rem; opacity: 0.75; transition: opacity 0.15s; }
+  #lc-nav-home:hover { opacity: 1; }
+  #lc-nav-divider { color: rgba(255,255,255,0.3); }
+  #lc-nav-title { font-size: 0.9rem; font-weight: 600; }
+  #lc-nav-right { display: flex; align-items: center; gap: 1rem; }
+  #lc-nav-date { font-family: 'DM Mono', monospace; font-size: 0.7rem; opacity: 0.65; letter-spacing: 0.05em; }
+  #lc-nav-tag { font-size: 0.65rem; font-family: 'DM Mono', monospace; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+  .lc-tag-financial { background: #8B5CF6; color: white; }
+  #lc-nav-print { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 5px; cursor: pointer; }
+  @media print { #lc-nav { display: none; } }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<nav id="lc-nav">
+  <div id="lc-nav-left">
+    <a id="lc-nav-home" href="../index.html">← Reports Hub</a>
+    <span id="lc-nav-divider">/</span>
+    <span id="lc-nav-title"></span>
+  </div>
+  <div id="lc-nav-right">
+    <span id="lc-nav-date"></span>
+    <span id="lc-nav-tag"></span>
+    <button id="lc-nav-print" onclick="window.print()">⎙ Print / PDF</button>
+  </div>
+</nav>
+<script>
+(function() {
+  const m = window.REPORT_META || {};
+  document.getElementById('lc-nav-title').textContent = m.name || 'Report';
+  if (m.date) {
+    const d = new Date(m.date + 'T12:00:00');
+    document.getElementById('lc-nav-date').textContent = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  const tag = document.getElementById('lc-nav-tag');
+  const labels = { shopify:'Shopify', amazon:'Amazon', ads:'Google Ads', financial:'Financial', general:'General' };
+  tag.textContent = labels[m.type] || m.type || '';
+  tag.className = 'lc-tag-' + (m.type || 'general');
+  if (m.name && m.date) document.title = m.name + ' — ' + m.date;
+})();
+</script>
+
+<div class="container">
+<div class="header">
+  <h1>🌵 Tutu and Lulu — CFO Dashboard</h1>
+  <div class="meta">📅 Week of May 25 – 31, 2026 &nbsp;·&nbsp; 🔄 Generated June 1, 2026 (live Windsor.ai data) &nbsp;·&nbsp; ⚠️ Meta purchase ROAS unavailable — connector limitation</div>
+</div>
+<div class="tabs">
+  <span>⚠️ Flags</span><span>📊 Summary KPIs</span><span>🏪 Channels</span><span>🔵 Google Ads</span><span>🟦 Meta Ads</span><span>🟠 Amazon SP</span><span>💡 Actions</span>
+</div>
+
+<!-- DATA LIMITATION BANNER -->
+<div class="connector-banner">
+  <h3>⚠️ Partial Data — Meta Purchase ROAS Unavailable (Connector Limitation)</h3>
+  <p>Windsor.ai's Facebook connector does not expose purchase conversion data in this environment — only spend, impressions, CPM, reach, and frequency are returned. <strong>$3,839 in Meta spend this week has no attributed revenue figure</strong> and therefore no ROAS can be computed. All other connectors (Shopify DTC, Shopify Wholesale, Google Ads, Amazon Ads SP) returned full data. Also:</p>
+  <ul>
+    <li><strong>Amazon SP organic settlement data:</strong> Not retrievable via amazon_sp connector — attributed sales from amazon_ads (14-day window) used as proxy for Amazon revenue. May overcount vs. cash settlement.</li>
+    <li><strong>Wholesale Faire commission:</strong> Estimated at 15% flat — actual commission varies by retailer. Actual may differ.</li>
+    <li><strong>Pixel integrity:</strong> Google tracked 42 conversions (8 brand + 34 shopping) vs. 227 DTC units this week — still only tracking ~18.5% of actual conversions. Pixel remains broken (6th consecutive week flagged).</li>
+  </ul>
+</div>
+
+<!-- CRITICAL ALERT -->
+<div class="alert-banner">
+  <h3>🚨 CRITICAL: First Confirmed Negative Profit Week — Expected Loss -$1,062</h3>
+  <p>With live data back this week: Total contribution $5,416 minus weekly OpEx $6,478 = <strong>expected loss of -$1,062</strong>. DTC contribution is NEGATIVE (-$431, -7.2%) — Google + Meta ad spend of $4,723 exceeded DTC gross margin of $4,292. Meta ROAS is unknown (connector limitation), making this week's true DTC efficiency impossible to confirm, but the math shows negative territory regardless. Wholesale ($3,669 contribution) and Amazon ($2,178) are profitable but cannot cover DTC's ad overspend + fixed costs this week. Immediate action required on Meta and Pam Shopping.</p>
+</div>
+
+<div class="section-title">⚠️ Critical Flags</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Expected Profit -$1,062 — Negative for the Week</div>
+  <div class="flag-body">First confirmed negative profit week. Contribution margin 25.6% — below the 30% target floor. Total ad spend $6,810 against net revenue $21,163 = MER 3.11x (below 4.0x target, above 2.5x floor). The ad budget structure is unsustainable if Meta's ROAS is as poor as prior weeks (Scale 1 was 1.86x in the last measured week, May 3). Cutting $1,500–$2,000/week of confirmed low-ROAS spend (Pam Shopping + Amazon underperformers) would restore profitability.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 DTC Contribution NEGATIVE (-$431, -7.2%) — Ad Spend Exceeds Gross Margin</div>
+  <div class="flag-body">DTC net revenue $5,948 · Gross margin $4,292 (72.2%) · Google + Meta combined spend $4,723. The channel is structurally loss-making this week. Meta spend alone ($3,839) is 64.5% of DTC net revenue. Even if Meta ROAS were 2.0x (Scale 1's last-measured level), the math doesn't work at this spend level against a $5,948 revenue base. Meta spend must be cut or DTC revenue must grow significantly before this channel is contribution-positive.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Pam Shopping — 2.16x ROAS — 5+ Weeks Past Pause Recommendation (STILL RUNNING)</div>
+  <div class="flag-body">Pam Shopping "april 14 2026 Spring Summer Boys and Girls" spent $794 this week at 2.16x ROAS — well below the 3.0x floor. Pause was first recommended April 27 and has been flagged every week since. Google conversion tracking is broken (18.5% capture rate), so the true ROAS may be higher — but 34 tracked conversions on $794 spend = $23.35/conversion, and $1,713 attributed value. Even after applying the 5x pixel adjustment, the math remains marginal. Pause immediately, verify in Google Ads console.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Meta ROAS Blind Spot — $3,839 Spent with Zero Visibility</div>
+  <div class="flag-body">Windsor.ai's Facebook connector does not return purchase conversion data. Scale 1 ($3,144 spend) and 4th of July ($695 spend) have no ROAS figure this week. Scale 1 was 1.86x ROAS as of May 3 — if that level persists, attributed Meta revenue would be ~$5,847, making Scale 1 also contribution-negative for DTC. CPM is $29.87 (stable vs. prior weeks), so the issue is conversion efficiency, not reach cost. Manually pull from Meta Ads Manager before next week's decisions.</div>
+</div>
+
+<div class="flag red">
+  <div class="flag-title">🔴 Pixel/Tag Audit — WEEK 6 OVERDUE (Critical)</div>
+  <div class="flag-body">Google tracked 42 conversions this week (8 brand search + 34 shopping) against 227 actual DTC orders — 18.5% capture rate. Six consecutive weeks of flagging with no resolution. PMax (if relaunched) and Shopping bid optimization are structurally impaired. Every week this remains unfixed compounds attribution drift and distorts campaign learning. This must be treated as a fire drill, not a backlog item.</div>
+</div>
+
+<div class="flag yellow">
+  <div class="flag-title">🟡 MER 3.11x — Below 4.0x Target, Holding Above 2.5x Floor</div>
+  <div class="flag-body">Marketing efficiency ratio $21,163 net revenue / $6,810 total ad spend = 3.11x. Prior last-known MER (May 3): 4.49x. Significant deterioration — driven by the 3-week data gap during which ad spend continued while revenue may have fluctuated, and by Meta spend increasing. MER needs to recover to 4.0x; at current net revenue, that implies total ad spend should not exceed $5,291/week.</div>
+</div>
+
+<div class="flag yellow">
+  <div class="flag-title">🟡 Amazon SP — Multiple Underperformers, $400+ Weekly Waste</div>
+  <div class="flag-body">6 campaigns with ROAS below 2x and meaningful spend: Blue Floral Flutter MNL ($60.67, 0.69x), Brown Blue Floral MNL ($41.44, 1.01x), Blue Big Brother Discovery ($39.81, 1.03x), All Spring Products Auto ($58.81, 1.39x), Premium ST Branded KW ($114.80, 1.45x), Floral Flutter Romper MNL ($130.50, 1.56x). Combined ~$446/week in low-return spend. Pause all six; reallocate budget to Ghost Auto (5.49x, $493 spend), Gingham Cat (6.41x), and Smocked Bishop BM (4.64x).</div>
+</div>
+
+<div class="flag yellow">
+  <div class="flag-title">🟡 4th of July CPM $63.68 — 2.1× Scale 1 — Expensive with Unknown ROAS</div>
+  <div class="flag-body">The 4th of July campaign ($695 spend, 10,917 impressions, CPM $63.68) is significantly more expensive per impression than Scale 1 ($29.87 CPM). July 4 is 33 days out — there's still time to evaluate and optimize, but without ROAS data this is a judgment call. Pull from Meta Ads Manager. If ROAS is below 2.0x, pause or reduce budget to $25/day; redirect to Scale 1 if Scale 1 is above 2.5x. If above 3.0x, scale cautiously.</div>
+</div>
+
+<div class="flag green">
+  <div class="flag-title">🟢 PMax TEST — Appears Paused (No Data This Week)</div>
+  <div class="flag-body">PMax: Pam TEST returned no data this week, suggesting it has been paused. This is good news — the campaign was running on broken pixel signals for 3+ weeks. Confirm pause status in Google Ads. Do not relaunch until pixel is confirmed fixed and conversion tracking is validated. Once pixel is clean, a fresh PMax launch with good signal should outperform the distorted prior run.</div>
+</div>
+
+<div class="flag green">
+  <div class="flag-title">🟢 Wholesale — Strong Week: $9,723 Net Revenue, 692 Units, Contribution 37.7%</div>
+  <div class="flag-body">23 wholesale orders, 692 units at an average of ~$14.06/unit net. Contribution $3,669 at 37.7% — above the 30% target. The large May 28 order (203 units, $3,718) is the primary driver. Wholesale is the healthiest channel this week and the primary profit center. Watch whether this is a one-time bulk order or a new account ramping.</div>
+</div>
+
+<div class="section-title">📊 Weekly KPIs — May 25–31, 2026</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Total Net Revenue</div>
+    <div class="kpi-value value-yellow">$21,163</div>
+    <div class="kpi-sub">Prior last-actual (May 3): $21,297 · ~flat WoW</div>
+    <span class="kpi-status yellow">Near Prior Avg</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Total Units Sold</div>
+    <div class="kpi-value">1,104</div>
+    <div class="kpi-sub">DTC 227 · Wholesale 692 · Amazon SP 185</div>
+    <span class="kpi-status yellow">Below Prior (1,173)</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Total Gross Margin</div>
+    <div class="kpi-value value-green">65.4%</div>
+    <div class="kpi-sub">$13,833 · Prior (May 3): 62.8% · Target ≥55%</div>
+    <span class="kpi-status green">Above Target</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Total Ad Spend</div>
+    <div class="kpi-value value-red">$6,810</div>
+    <div class="kpi-sub">Google $884 · Meta $3,839 · Amazon SP $2,087</div>
+    <span class="kpi-status red">+43% vs May 3 ($4,747)</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Contribution Amount</div>
+    <div class="kpi-value value-yellow">$5,416</div>
+    <div class="kpi-sub">Prior (May 3): $8,631 · Down $3,215</div>
+    <span class="kpi-status red">Down 37%</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Contribution Margin</div>
+    <div class="kpi-value value-red">25.6%</div>
+    <div class="kpi-sub">Target ≥30% · Floor 20% · Prior: 40.5%</div>
+    <span class="kpi-status red">Below Target</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Expected Profit</div>
+    <div class="kpi-value value-red">-$1,062</div>
+    <div class="kpi-sub">Contribution $5,416 – OpEx $6,478 (excl. Owner Comp &amp; Debt Repay)</div>
+    <span class="kpi-status red">Negative</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">MER (Net Rev / Ad Spend)</div>
+    <div class="kpi-value value-yellow">3.11x</div>
+    <div class="kpi-sub">Target ≥4.0x · Floor 2.5x · Prior (May 3): 4.49x</div>
+    <span class="kpi-status yellow">Below Target</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Google Blended ROAS</div>
+    <div class="kpi-value value-yellow">2.36x</div>
+    <div class="kpi-sub">Brand 4.17x ✅ · Pam Shopping 2.16x 🔴 · Conv tracking 18.5% capture</div>
+    <span class="kpi-status red">Below Floor (3.0x)</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Meta Blended ROAS</div>
+    <div class="kpi-value na">— N/A —</div>
+    <div class="kpi-sub">Connector limitation — purchase data unavailable · Spend $3,839</div>
+    <span class="kpi-status gray">Data Unavailable</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Amazon SP ACOS</div>
+    <div class="kpi-value value-yellow">29.3%</div>
+    <div class="kpi-sub">$2,087 spend → $7,121 attributed · ROAS 3.41x · Target &lt;20% · Flag &gt;30%</div>
+    <span class="kpi-status yellow">Near Flag Threshold</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">DTC Contribution</div>
+    <div class="kpi-value value-red">-7.2%</div>
+    <div class="kpi-sub">-$431 · Ad spend $4,723 vs gross margin $4,292</div>
+    <span class="kpi-status red">Negative — Critical</span>
+  </div>
+</div>
+
+<div class="section-title">📅 Prior Week Reference — April 27 – May 3, 2026 (Last Full Live Data)</div>
+<div class="prev-week">
+  <h4>Last confirmed live data before the 3-week connector outage (May 4–24)</h4>
+  <div class="prev-grid">
+    <div class="prev-item"><div class="prev-label">Gross Revenue</div><div class="prev-val">$27,206</div></div>
+    <div class="prev-item"><div class="prev-label">Net Revenue</div><div class="prev-val">$21,297</div></div>
+    <div class="prev-item"><div class="prev-label">Gross Margin</div><div class="prev-val">62.8%</div></div>
+    <div class="prev-item"><div class="prev-label">Units Sold</div><div class="prev-val">1,173</div></div>
+    <div class="prev-item"><div class="prev-label">Ad Spend</div><div class="prev-val">$4,747</div></div>
+    <div class="prev-item"><div class="prev-label">Contribution $</div><div class="prev-val">$8,631</div></div>
+    <div class="prev-item"><div class="prev-label">Contribution %</div><div class="prev-val">40.5%</div></div>
+    <div class="prev-item"><div class="prev-label">Expected Profit</div><div class="prev-val" style="color:#d97706">$2,153 ⚠️</div></div>
+    <div class="prev-item"><div class="prev-label">MER</div><div class="prev-val">4.49x</div></div>
+    <div class="prev-item"><div class="prev-label">G+Meta ROAS</div><div class="prev-val" style="color:#dc2626">1.86x 🔴</div></div>
+    <div class="prev-item"><div class="prev-label">AMZ ACOS</div><div class="prev-val" style="color:#d97706">29.7% 🟡</div></div>
+    <div class="prev-item"><div class="prev-label">DTC CM%</div><div class="prev-val" style="color:#dc2626">15.1% 🔴</div></div>
+  </div>
+</div>
+
+<div class="section-title">🏪 Channel P&amp;L — Landed COGS $6.64/unit ($5.56 supplier + $1.08 inbound)</div>
+<div class="channel-grid">
+  <div class="channel dtc">
+    <h3>🛒 Shopify DTC (lil-cactus)</h3>
+    <div class="channel-row"><span>Gross Revenue (subtotal)</span><span>$6,053</span></div>
+    <div class="channel-row"><span>Refunds</span><span class="neg">-$105</span></div>
+    <div class="channel-row"><span>Net Revenue</span><span><b>$5,948</b></span></div>
+    <div class="channel-row"><span>Orders</span><span>126</span></div>
+    <div class="channel-row"><span>Units (net)</span><span>227</span></div>
+    <div class="channel-row"><span>COGS (227 × $6.64)</span><span class="neg">-$1,507</span></div>
+    <div class="channel-row"><span>Shopify Fee (~2.5%)</span><span class="neg">-$149</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="pos">$4,292 (72.2%)</span></div>
+    <div class="channel-row"><span>Ad Spend (Google $884 + Meta $3,839)</span><span class="neg">-$4,723</span></div>
+    <div class="channel-row total"><span>Contribution</span><span class="neg">-$431 (-7.2%) 🔴</span></div>
+    <div class="channel-row" style="margin-top:8px; font-size:11px; color:#9ca3af;">Prior (May 3): Net $5,212 · CM 15.1% · Also below floor</div>
+  </div>
+  <div class="channel ws">
+    <h3>🏬 Shopify Wholesale / Faire</h3>
+    <div class="channel-row"><span>Net Revenue (total_price)</span><span><b>$9,723</b></span></div>
+    <div class="channel-row"><span>Orders</span><span>23</span></div>
+    <div class="channel-row"><span>Units</span><span>692</span></div>
+    <div class="channel-row"><span>COGS (692 × $6.64)</span><span class="neg">-$4,595</span></div>
+    <div class="channel-row"><span>Faire Commission (est. 15%)</span><span class="neg">-$1,458</span></div>
+    <div class="channel-row total"><span>Contribution</span><span class="pos">$3,669 (37.7%) ✅</span></div>
+    <div class="channel-row" style="margin-top:8px; font-size:11px; color:#9ca3af;">May 28 bulk order: 203 units / $3,718 — primary driver. Verify Faire actual commission rate.</div>
+  </div>
+  <div class="channel amzn">
+    <h3>🟠 Amazon (US) — Ads-Attributed Proxy</h3>
+    <div class="channel-row"><span>Attributed Sales (14d)</span><span>$7,121</span></div>
+    <div class="channel-row"><span>Referral Fees (~14.5%)</span><span class="neg">-$1,033</span></div>
+    <div class="channel-row"><span>FBA Fees (185 units × $3.22)</span><span class="neg">-$596</span></div>
+    <div class="channel-row"><span>Net Revenue (est.)</span><span><b>$5,493</b></span></div>
+    <div class="channel-row"><span>Units</span><span>185</span></div>
+    <div class="channel-row"><span>COGS (185 × $6.64)</span><span class="neg">-$1,228</span></div>
+    <div class="channel-row total"><span>Gross Margin</span><span class="pos">$4,264</span></div>
+    <div class="channel-row"><span>Amazon SP Ad Spend</span><span class="neg">-$2,087</span></div>
+    <div class="channel-row total"><span>Contribution</span><span class="pos">$2,178 (39.6%) ✅</span></div>
+    <div class="channel-row" style="margin-top:8px; font-size:11px; color:#9ca3af;">⚠️ Attribution proxy — 14d window may overcount vs. cash settlement. Settlement data unavailable.</div>
+  </div>
+</div>
+
+<div class="section-title">📊 Channel Summary</div>
+<table>
+  <tr>
+    <th>Channel</th><th>Net Rev</th><th>Units</th><th>COGS</th><th>Gross Margin</th><th>Platform Fees</th><th>Ad Spend</th><th>Contribution $</th><th>CM %</th><th>Status</th>
+  </tr>
+  <tr class="highlight-red">
+    <td>Shopify DTC</td><td>$5,948</td><td>227</td><td>$1,507</td><td>72.2%</td><td>$149</td><td>$4,723</td><td class="neg">-$431</td><td class="value-red">-7.2%</td><td><span class="badge red">NEGATIVE</span></td>
+  </tr>
+  <tr class="highlight-green">
+    <td>Wholesale / Faire</td><td>$9,723</td><td>692</td><td>$4,595</td><td>52.8%</td><td>$1,458 est.</td><td>$0</td><td>$3,669</td><td class="value-green">37.7%</td><td><span class="badge green">Above Target</span></td>
+  </tr>
+  <tr class="highlight-green">
+    <td>Amazon US (proxy)</td><td>$5,493</td><td>185</td><td>$1,228</td><td>77.6%</td><td>$1,629</td><td>$2,087</td><td>$2,178</td><td class="value-green">39.6%</td><td><span class="badge green">Above Target</span></td>
+  </tr>
+  <tr class="total">
+    <td>Total</td><td>$21,163</td><td>1,104</td><td>$7,330</td><td>65.4%</td><td>$3,236</td><td>$6,810</td><td>$5,416</td><td class="value-red">25.6%</td><td><span class="badge red">Below Target — Loss</span></td>
+  </tr>
+</table>
+
+<div class="section-title">🔵 Google Ads Deep Dive — May 25–31</div>
+<table>
+  <tr><th>Campaign</th><th>Spend</th><th>Conv. Value</th><th>ROAS</th><th>Conversions</th><th>Impressions</th><th>Clicks</th><th>Status</th></tr>
+  <tr class="highlight-green">
+    <td>[EC] Search | Brand Related Keywords</td><td>$90</td><td>$374</td><td class="value-green">4.17x</td><td>8</td><td>584</td><td>235</td><td><span class="badge green">Above Target ✅</span></td>
+  </tr>
+  <tr class="highlight-red">
+    <td>Pam Shopping (Apr 14 Spring/Summer)</td><td>$794</td><td>$1,713</td><td class="value-red">2.16x</td><td>34</td><td>93,994</td><td>1,359</td><td><span class="badge red">PAUSE — 5+ Wks Overdue</span></td>
+  </tr>
+  <tr class="total">
+    <td>Total Google</td><td>$884</td><td>$2,086</td><td class="value-red">2.36x</td><td>42</td><td>94,578</td><td>1,594</td><td><span class="badge red">Below Floor (3.0x)</span></td>
+  </tr>
+</table>
+<div class="note warn"><b>Pixel integrity:</b> 42 Google-tracked conversions vs. 227 DTC orders = 18.5% capture rate (pixel still broken — week 6). Pam Shopping true ROAS is likely higher, but cannot be confirmed. Even at 5× adjustment (if all uncaptured were Shopping conversions), estimated ROAS ~6× — however this is speculative and Pam Shopping has underperformed for many weeks at any adjusted rate. PMax TEST shows no data — likely paused ✅.</div>
+
+<div class="section-title">🟦 Meta Ads Deep Dive — May 25–31</div>
+<table>
+  <tr><th>Campaign</th><th>Spend</th><th>Impressions</th><th>CPM</th><th>Purchases</th><th>ROAS</th><th>Status</th></tr>
+  <tr>
+    <td>EC | Adv+ Catalog | Scale 1</td><td>$3,144</td><td>105,250</td><td>$29.87</td><td class="gray-text">N/A*</td><td class="gray-text">N/A*</td><td><span class="badge gray">ROAS Unknown</span></td>
+  </tr>
+  <tr>
+    <td>4th of July 2026</td><td>$695</td><td>10,917</td><td class="value-red">$63.68</td><td class="gray-text">N/A*</td><td class="gray-text">N/A*</td><td><span class="badge yellow">High CPM — Monitor</span></td>
+  </tr>
+  <tr class="total">
+    <td>Total Meta</td><td>$3,839</td><td>116,167</td><td>$33.05 blended</td><td>—</td><td class="gray-text">N/A*</td><td><span class="badge gray">Connector Limitation</span></td>
+  </tr>
+</table>
+<div class="note danger"><b>* Meta purchase data unavailable:</b> Windsor.ai Facebook connector does not expose purchase_value, purchases, or ROAS fields in this session. Pull from Meta Ads Manager directly before making spend decisions. Last known Scale 1 ROAS was 1.86x (May 3) — if unchanged, Scale 1 is contribution-negative at this spend level. 4th of July CPM $63.68 is 2.1× Scale 1's CPM — July 4 is 33 days out, still time to optimize.</div>
+
+<div class="section-title">🟠 Amazon SP Deep Dive — May 25–31</div>
+<div class="note"><b>All campaign data from amazon_ads connector (US marketplace, 14-day attribution window).</b> Total spend $2,087 · Attributed sales $7,121 · Overall ACOS 29.3% · Overall ROAS 3.41x · 182 conversions · 185 units</div>
+
+<table>
+  <tr><th>Campaign</th><th>Spend</th><th>Attributed Sales</th><th>ACOS</th><th>ROAS</th><th>Units</th><th>Status</th></tr>
+  <tr class="highlight-green"><td>All Catalog Ghost Auto</td><td>$493</td><td>$2,704</td><td class="value-green">18.2%</td><td class="value-green">5.49x</td><td>68</td><td><span class="badge green">Winner — Scale ✅</span></td></tr>
+  <tr class="highlight-green"><td>Branded Keywords</td><td>$18</td><td>$343</td><td class="value-green">5.2%</td><td class="value-green">19.05x</td><td>9</td><td><span class="badge green">Winner — Scale ✅</span></td></tr>
+  <tr class="highlight-green"><td>Gingham 34312 - Cat</td><td>$21</td><td>$132</td><td class="value-green">15.6%</td><td class="value-green">6.41x</td><td>4</td><td><span class="badge green">Winner ✅</span></td></tr>
+  <tr class="highlight-green"><td>Girls Tennis Skirt - MNL</td><td>$9</td><td>$60</td><td class="value-green">15.7%</td><td class="value-green">6.39x</td><td>2</td><td><span class="badge green">Winner ✅</span></td></tr>
+  <tr class="highlight-green"><td>Blue Pink Floral Flutter - BM</td><td>$14</td><td>$84</td><td class="value-green">16.2%</td><td class="value-green">6.19x</td><td>2</td><td><span class="badge green">Winner ✅</span></td></tr>
+  <tr class="highlight-green"><td>Best-Selling Products - Auto</td><td>$59</td><td>$297</td><td class="value-green">20.0%</td><td class="value-green">4.99x</td><td>9</td><td><span class="badge green">Above Target ✅</span></td></tr>
+  <tr class="highlight-green"><td>All Smocked Bishop Dresses - BM</td><td>$71</td><td>$330</td><td class="value-green">21.5%</td><td class="value-green">4.64x</td><td>8</td><td><span class="badge green">Above Target ✅</span></td></tr>
+  <tr class="highlight-green"><td>Gingham 34312 - MNL</td><td>$88</td><td>$375</td><td class="value-yellow">23.6%</td><td class="value-green">4.24x</td><td>11</td><td><span class="badge green">Above Target ✅</span></td></tr>
+  <tr class="highlight-green"><td>New Spring/Summer - Auto</td><td>$78</td><td>$326</td><td class="value-yellow">23.8%</td><td class="value-green">4.20x</td><td>8</td><td><span class="badge green">Above Target ✅</span></td></tr>
+  <tr><td>All Catalog - Branded KW 2</td><td>$47</td><td>$163</td><td class="value-yellow">28.6%</td><td class="value-yellow">3.49x</td><td>4</td><td><span class="badge yellow">Hold</span></td></tr>
+  <tr><td>All Shortalls - Auto</td><td>$49</td><td>$153</td><td class="value-yellow">32.0%</td><td class="value-yellow">3.12x</td><td>4</td><td><span class="badge yellow">Hold — Watch</span></td></tr>
+  <tr><td>All FBA Active Products - Auto</td><td>$145</td><td>$416</td><td class="value-yellow">34.8%</td><td class="value-yellow">2.88x</td><td>10</td><td><span class="badge yellow">Over ACOS — Monitor</span></td></tr>
+  <tr><td>All Rompers SP - DAT</td><td>$94</td><td>$267</td><td class="value-yellow">35.2%</td><td class="value-yellow">2.84x</td><td>7</td><td><span class="badge yellow">Over ACOS — Monitor</span></td></tr>
+  <tr><td>Gingham 34312 - Discovery</td><td>$84</td><td>$204</td><td class="value-yellow">41.1%</td><td class="value-yellow">2.43x</td><td>6</td><td><span class="badge yellow">Over ACOS</span></td></tr>
+  <tr><td>Toddler One-Piece Bubble - Broad</td><td>$96</td><td>$206</td><td class="value-yellow">46.5%</td><td class="value-yellow">2.15x</td><td>6</td><td><span class="badge yellow">Over ACOS</span></td></tr>
+  <tr><td>Gingham 34312 - BM</td><td>$22</td><td>$112</td><td class="value-green">19.6%</td><td class="value-green">5.10x</td><td>3</td><td><span class="badge green">Above Target ✅</span></td></tr>
+  <tr><td>All Catalog - Auto</td><td>$86</td><td>$226</td><td class="value-yellow">37.9%</td><td class="value-yellow">2.64x</td><td>6</td><td><span class="badge yellow">Over ACOS</span></td></tr>
+  <tr><td>All Evergreen - Auto</td><td>$18</td><td>$66</td><td class="value-yellow">27.3%</td><td class="value-yellow">3.67x</td><td>2</td><td><span class="badge yellow">Hold</span></td></tr>
+  <tr class="highlight-red"><td>Floral Flutter Romper - 33251 - MNL</td><td>$131</td><td>$204</td><td class="value-red">64.0%</td><td class="value-red">1.56x</td><td>5</td><td><span class="badge red">Pause — Below Floor</span></td></tr>
+  <tr class="highlight-red"><td>Lil Cactus - Premium ST Branded KW</td><td>$115</td><td>$166</td><td class="value-red">69.2%</td><td class="value-red">1.45x</td><td>4</td><td><span class="badge red">Pause — Below Floor</span></td></tr>
+  <tr class="highlight-red"><td>All Spring Products 2026 - Auto</td><td>$59</td><td>$82</td><td class="value-red">71.7%</td><td class="value-red">1.39x</td><td>2</td><td><span class="badge red">Pause — Below Floor</span></td></tr>
+  <tr class="highlight-red"><td>Baseball Bishop 32557 - Modifiers</td><td>$18</td><td>$41</td><td class="value-red">42.8%</td><td class="value-red">2.34x</td><td>1</td><td><span class="badge red">Pause — ACOS&gt;40%</span></td></tr>
+  <tr class="highlight-red"><td>Blue Big Brother 38090 - Discovery</td><td>$40</td><td>$41</td><td class="value-red">97.1%</td><td class="value-red">1.03x</td><td>1</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="highlight-red"><td>Brown Blue Floral Bishop - MNL</td><td>$41</td><td>$42</td><td class="value-red">98.7%</td><td class="value-red">1.01x</td><td>1</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="highlight-red"><td>Blue Floral Flutter - 32565 - MNL</td><td>$61</td><td>$42</td><td class="value-red">144.5%</td><td class="value-red">0.69x</td><td>1</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="highlight-red"><td>White Pink Cross Bishop - 32037 - MNL</td><td>$10</td><td>$0</td><td class="value-red">∞</td><td class="value-red">0.00x</td><td>0</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="highlight-red"><td>Baseball Bishop 32557 - MNL</td><td>$13</td><td>$0</td><td class="value-red">∞</td><td class="value-red">0.00x</td><td>0</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="highlight-red"><td>Bishop Dresses - SP - DAT</td><td>$18</td><td>$0</td><td class="value-red">∞</td><td class="value-red">0.00x</td><td>0</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="highlight-red"><td>Blue Floral Flutter - SP(CAT)</td><td>$13</td><td>$0</td><td class="value-red">∞</td><td class="value-red">0.00x</td><td>0</td><td><span class="badge red">Pause Immediately</span></td></tr>
+  <tr class="total"><td>TOTAL</td><td>$2,087</td><td>$7,121</td><td class="value-yellow">29.3%</td><td class="value-yellow">3.41x</td><td>185</td><td><span class="badge yellow">Near ACOS Flag</span></td></tr>
+</table>
+
+<div class="section-title">💡 Action Items — Prioritized by Impact</div>
+<div class="actions">
+  <div class="action">
+    <div class="action-num">1</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Pull Meta Ads Manager Data Immediately — $3,839 in Blind Spend</div>
+      <div class="action-body">Windsor.ai cannot return Meta purchase data this session. Log into Meta Ads Manager and pull Scale 1 and 4th of July ROAS for May 25–31. If Scale 1 ROAS is below 2.0x: reduce budget by 50% immediately (from ~$449/day to ~$224/day). If 4th of July ROAS is below 2.0x with July 4 still 33 days out: reduce to $25/day test budget or pause. The entire DTC profitability question hinges on this data.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">2</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Pause "Pam Shopping" Google Campaign — IMMEDIATE — $794/week, 5+ Weeks Overdue</div>
+      <div class="action-body">Pam Shopping spent $794 this week at 2.16x ROAS (confirmed, not pixel-distorted — 34 conversions tracked). Pause has been recommended since April 27 (6 reports). Estimated waste since first recommendation: ~$4,000+. Log into Google Ads, pause the campaign now. If a replacement Shopping campaign is needed, launch with a clean structure post-pixel-fix.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">3</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Fix Google Pixel — WEEK 6 OVERDUE — Do Not Delay</div>
+      <div class="action-body">42 Google conversions tracked vs. 227 DTC orders = 18.5% capture. Google Shopping and any future PMax campaigns are bidding on phantom signals. This is the root cause of Google underperformance and is preventing accurate ROAS evaluation. Audit Google Tag Manager or gtag.js, verify the Shopify order confirmation page fires a purchase event, validate conversion count matches order count.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">4</div>
+    <div class="action-content">
+      <div class="action-title">🔴 Pause Amazon SP Immediate Failures (10 campaigns, ~$380/week waste)</div>
+      <div class="action-body">Pause immediately (ROAS &lt;1.1x or $0 attribution): Blue Floral Flutter MNL ($61, 0.69x), Brown Blue Floral MNL ($41, 1.01x), Blue Big Brother Discovery ($40, 1.03x), White Pink Bishop MNL ($10, 0x), Baseball Bishop MNL ($13, 0x), Bishop Dresses DAT ($18, 0x), Blue Floral SP(CAT) ($13, 0x). Also pause below-floor (ROAS &lt;2.0x): All Spring Products Auto ($59, 1.39x), Lil Cactus Premium ST BK ($115, 1.45x), Floral Flutter Romper MNL ($131, 1.56x). Combined ~$501/week reallocatable to Ghost Auto and Branded Keywords winners.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">5</div>
+    <div class="action-content">
+      <div class="action-title">🟡 Scale Amazon SP Winners — Ghost Auto and Branded Keywords</div>
+      <div class="action-body">All Catalog Ghost Auto: $493 spend, $2,704 attributed sales, 5.49x ROAS — this is the best-performing campaign by volume. Increase daily budget by 25–30%. Branded Keywords: $18 spend, $343 attributed, 19.05x ROAS — extremely efficient. Increase budget aggressively (this has massive headroom). Also scale Gingham Cat (6.41x), Blue Pink Floral Flutter BM (6.19x), Smocked Bishop BM (4.64x). Free up budget from the 10 paused campaigns ($501/week) and redirect here.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">6</div>
+    <div class="action-content">
+      <div class="action-title">🟡 4th of July Meta Campaign — Evaluate Now (July 4 is 33 Days Out)</div>
+      <div class="action-body">The 4th of July campaign has been running since May 3 (~4 weeks). CPM $63.68 is expensive (2.1x Scale 1). Pull actual ROAS from Ads Manager. Decision matrix: if ROAS &lt;2.0x → reduce to $25/day or pause; if 2.0–3.0x → hold current budget and refresh creative; if &gt;3.0x → scale by 25–50% and expand audience. July 4 momentum typically builds in the 2–3 weeks before the date — June 10–25 is the critical window.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">7</div>
+    <div class="action-content">
+      <div class="action-title">🟡 Investigate Meta Windsor.ai Connector — Purchase Data Missing</div>
+      <div class="action-body">The Facebook connector returned only spend, impressions, CPM, reach, and frequency — no purchase_value or purchases fields. This appears to be a connector configuration issue rather than a data gap (Meta definitely tracks purchases). Options: (a) re-authorize the Windsor.ai Facebook connection and check if purchase event fields are enabled, (b) check Windsor dashboard settings for the Facebook connector, (c) contact Windsor.ai support. Until resolved, Meta ROAS must be pulled manually each week.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">8</div>
+    <div class="action-content">
+      <div class="action-title">🔵 PMax TEST — Confirm Pause Status, Plan Clean Relaunch Post-Pixel-Fix</div>
+      <div class="action-body">No PMax data this week — likely paused. Confirm in Google Ads console. Do not relaunch until pixel is validated. When pixel is clean: relaunch PMax with a 2-week learning budget, monitor conversion volume daily, set a 14-day performance review date. A clean PMax with accurate signals should outperform the prior distorted run significantly.</div>
+    </div>
+  </div>
+  <div class="action">
+    <div class="action-num">9</div>
+    <div class="action-content">
+      <div class="action-title">🔵 Wholesale Bulk Order Validation — May 28 (203 units / $3,718)</div>
+      <div class="action-body">The May 28 wholesale order (203 units / $3,718 gross) drove 44% of total wholesale revenue this week. Verify this is a legitimate settled order (not a return-in-progress — there's a $0 order_count row for the same amount on the same date which may be a pre-settlement duplicate). Confirm in Shopify admin and Faire dashboard that this order is paid and shipped. If recurring, this account should be flagged for relationship development.</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  🌵 Tutu and Lulu / Lil Cactus — CFO Dashboard · May 25–31, 2026 · Live Data Run (June 1, 2026)<br>
+  COGS: $5.56 avg supplier + $1.08 inbound = $6.64/unit landed · Weekly OpEx $6,478 (T&amp;L + LC, excl. Owner Compensation &amp; Debt Repay)<br>
+  Channel fees: Shopify DTC 2.5% blended · Faire commission estimated 15% (actual varies) · Amazon: 14.5% referral + $3.22/unit FBA est.<br>
+  Amazon revenue: ads-attributed 14-day proxy (settlement data unavailable) · Meta ROAS: not available via Windsor.ai connector this session — pull from Ads Manager<br>
+  Google pixel capture rate: 18.5% (42 tracked vs. 227 DTC orders) · Generated: June 1, 2026
+</div>
+</div>
+</body></html>
