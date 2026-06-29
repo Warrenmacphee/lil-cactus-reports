@@ -394,16 +394,16 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.min.js"></script>
 <script>
 // ─── AUTH ──────────────────────────────────────────────────────────
 const HASH = 'af57b70b81943fa8e5acd0aedce34132edd8257ff5d369f981c13f091f6372be';
 const SESSION_KEY = 'lc_reports_auth';
 
-function checkPassword() {
+async function checkPassword() {
   const input = document.getElementById('gate-input');
   const error = document.getElementById('gate-error');
-  const h = CryptoJS.SHA256(input.value).toString();
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input.value));
+  const h = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
   if (h === HASH) {
     sessionStorage.setItem(SESSION_KEY, '1');
     document.getElementById('gate').style.display = 'none';
