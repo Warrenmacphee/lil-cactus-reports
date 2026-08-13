@@ -70,7 +70,7 @@ body { font-family: 'DM Sans', sans-serif; background: #f4f6f0; color: #1a2e0d; 
 
 /* ---- CHANNEL P&L ---- */
 .channel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.channel-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #e2edd8; }
+.channel-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #e2edd8; display: flex; flex-direction: column; }
 .channel-card h3 { font-size: 13px; font-weight: 700; color: #2D5016; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e8f0e0; display: flex; align-items: center; gap: 8px; }
 .channel-icon { font-size: 16px; }
 .pl-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; }
@@ -84,6 +84,11 @@ body { font-family: 'DM Sans', sans-serif; background: #f4f6f0; color: #1a2e0d; 
 .pill-green { background: #dcfce7; color: #15803d; }
 .pill-amber { background: #fef3c7; color: #b45309; }
 .pill-red { background: #fee2e2; color: #b91c1c; }
+.pl-spacer { flex: 1 0 12px; }
+.pl-row.per-unit { margin-top: 0; padding: 9px 11px; background: #f0f5e8; border: 1px solid #dbe8cc; border-left: 3px solid #2D5016; border-radius: 6px; font-weight: 700; color: #2D5016; font-size: 12px; align-items: flex-start; }
+.pl-row.per-unit .pl-label { color: #2D5016; }
+.pl-row.per-unit .pl-value { font-size: 15px; font-weight: 700; color: #2D5016; }
+.per-unit-note { display: block; font-size: 10px; font-weight: 400; color: #6b8a52; margin-top: 3px; }
 
 /* ---- SUMMARY TABLE ---- */
 .summary-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
@@ -338,6 +343,8 @@ const REPORT_META = { name: "CFO Dashboard — Aug 3–9, 2026", date: "2026-08-
         <div class="pl-row"><span class="pl-label">Meta Ads</span><span class="pl-value neg">−$1,420.81</span></div>
         <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-red">28.5% ⚠️</span></span><span class="pl-value amber-val">$1,628.77</span></div>
         <div class="pl-row" style="margin-top:8px;font-size:11px;color:#6b8a52;"><span>116 orders · units estimated via Net Rev / avg retail price ($38.28)</span></div>
+        <div class="pl-spacer"></div>
+        <div class="pl-row per-unit"><span class="pl-label">Contribution Margin $ / Unit Sold<span class="per-unit-note">$1,628.77 ÷ ~149 units (est.)</span></span><span class="pl-value">$10.93</span></div>
       </div>
 
       <!-- FAIRE -->
@@ -353,6 +360,8 @@ const REPORT_META = { name: "CFO Dashboard — Aug 3–9, 2026", date: "2026-08-
         <div class="pl-row"><span class="pl-label">Google "Wholesale Leads"</span><span class="pl-value neg">−$127.43</span></div>
         <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">44.8% ✓</span></span><span class="pl-value pos">$4,754.10</span></div>
         <div class="pl-row" style="margin-top:8px;font-size:11px;color:#6b8a52;"><span>70 orders · avg $189.19/order · Faire effective fee rate 18.3% of gross</span></div>
+        <div class="pl-spacer"></div>
+        <div class="pl-row per-unit"><span class="pl-label">Contribution Margin $ / Unit Sold<span class="per-unit-note">$4,754.10 ÷ ~863 units (est.)</span></span><span class="pl-value">$5.51</span></div>
       </div>
 
       <!-- AMAZON US+MX -->
@@ -367,6 +376,8 @@ const REPORT_META = { name: "CFO Dashboard — Aug 3–9, 2026", date: "2026-08-
         <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">40.3% ✓</span></span><span class="pl-value pos">$4,177.58</span></div>
         <div class="pl-row" style="margin-top:8px;font-size:11px;color:#6b8a52;"><span>Fees estimated — no Aug 3–9 settlement posted yet (see flags)</span></div>
         <div class="pl-row" style="font-size:11px;color:#6b8a52;"><span>CA: $0 · MX: $227.68 (3,975 MXN, 5 units) · ACOS 37.2%</span></div>
+        <div class="pl-spacer"></div>
+        <div class="pl-row per-unit"><span class="pl-label">Contribution Margin $ / Unit Sold<span class="per-unit-note">$4,177.58 ÷ 368 units (US+MX, actual)</span></span><span class="pl-value">$11.35</span></div>
       </div>
 
     </div>
@@ -783,7 +794,7 @@ const REPORT_META = { name: "CFO Dashboard — Aug 3–9, 2026", date: "2026-08-
 
   <!-- FOOTER -->
   <div class="footer">
-    <strong>Methodology:</strong> Reporting period: Mon Aug 3 – Sun Aug 9, 2026. Revenue sources: Shopify DTC &amp; Wholesale via Windsor.ai (lil-cactus.myshopify.com, lil-cactus-wholesale.myshopify.com); Amazon SP via S&amp;T Report (ordered product sales, actual). Amazon US/MX referral fees this week use the actual effective commission rate (17.46%) observed in the most recent available settlement report (Jul 27–31 2026) — no Aug 3–9 settlement had posted as of generation time; FBA fees use the doc's $3.54–$6.04/unit range midpoint ($4.79) applied to US units shipped. COGS: blended $5.56 avg cost + $1.08 inbound shipping = $6.64/unit landed (ProductCoGs-Initial Load (Apr17-2026).xlsx, 12,393 SKUs). DTC and Wholesale units for COGS are estimated as (Net/Gross Revenue ÷ average retail or wholesale price) per methodology §4c, rather than raw Shopify order-quantity, because a material share of this week's raw quantity came from $0-gross return/refund line items that would otherwise overstate COGS. Faire fees: actual FAIRE-COMMISSION and FAIRE-PAYMENT-PROCESSING-FEE line items (by line-item SKU) from all 70 wholesale orders this week. PPC: Google Ads &amp; Meta via Windsor.ai; Amazon Ads SP via Windsor.ai. DTC platform fee: est. 2.5% of net revenue (Shopify Payments). Contribution Amount = Total Net Revenue − Total COGS − DTC card fee − Total Ad Spend (Faire and Amazon fees are already netted into their channel's Net Revenue and are not subtracted again). Total Gross Margin % = (Total Net Revenue − Total COGS) / Total Net Revenue, per methodology §9 formula. Expected Profit = Contribution Amount − $6,478 weekly OpEx (T&amp;L + LC combined, excl. Owner Compensation and Debt Repayment). Amazon CA: $0 sales this period. Amazon MX: $227.68 USD (3,975.12 MXN, 5 units), converted using Bank of Canada <strong>July 2026</strong> monthly average rates (US dollar 1.4107 CAD, Mexican peso 0.0808 CAD → 1 USD ≈ 17.46 MXN); August 2026's monthly average was not yet published as of report generation (mid-month). Total PPC Spend reconciled against QuickBooks <code>profitandloss__cogs</code> as the best available proxy for bookskeep variable Cost of Sales — see QBO Reconciliation section for caveats. Report generated automatically via scheduled task on 2026-08-09.
+    <strong>Methodology:</strong> Reporting period: Mon Aug 3 – Sun Aug 9, 2026. Revenue sources: Shopify DTC &amp; Wholesale via Windsor.ai (lil-cactus.myshopify.com, lil-cactus-wholesale.myshopify.com); Amazon SP via S&amp;T Report (ordered product sales, actual). Amazon US/MX referral fees this week use the actual effective commission rate (17.46%) observed in the most recent available settlement report (Jul 27–31 2026) — no Aug 3–9 settlement had posted as of generation time; FBA fees use the doc's $3.54–$6.04/unit range midpoint ($4.79) applied to US units shipped. COGS: blended $5.56 avg cost + $1.08 inbound shipping = $6.64/unit landed (ProductCoGs-Initial Load (Apr17-2026).xlsx, 12,393 SKUs). DTC and Wholesale units for COGS are estimated as (Net/Gross Revenue ÷ average retail or wholesale price) per methodology §4c, rather than raw Shopify order-quantity, because a material share of this week's raw quantity came from $0-gross return/refund line items that would otherwise overstate COGS. Faire fees: actual FAIRE-COMMISSION and FAIRE-PAYMENT-PROCESSING-FEE line items (by line-item SKU) from all 70 wholesale orders this week. PPC: Google Ads &amp; Meta via Windsor.ai; Amazon Ads SP via Windsor.ai. DTC platform fee: est. 2.5% of net revenue (Shopify Payments). Contribution Amount = Total Net Revenue − Total COGS − DTC card fee − Total Ad Spend (Faire and Amazon fees are already netted into their channel's Net Revenue and are not subtracted again). Total Gross Margin % = (Total Net Revenue − Total COGS) / Total Net Revenue, per methodology §9 formula. Expected Profit = Contribution Amount − $6,478 weekly OpEx (T&amp;L + LC combined, excl. Owner Compensation and Debt Repayment). Amazon CA: $0 sales this period. Amazon MX: $227.68 USD (3,975.12 MXN, 5 units), converted using Bank of Canada <strong>July 2026</strong> monthly average rates (US dollar 1.4107 CAD, Mexican peso 0.0808 CAD → 1 USD ≈ 17.46 MXN); August 2026's monthly average was not yet published as of report generation (mid-month). Total PPC Spend reconciled against QuickBooks <code>profitandloss__cogs</code> as the best available proxy for bookskeep variable Cost of Sales — see QBO Reconciliation section for caveats. Contribution Margin $ / Unit Sold (shown at the foot of each Channel P&amp;L card) = that channel's Contribution ÷ that channel's units for the period, using the same unit count used in the channel's COGS line (DTC and Faire units are estimates per methodology §4c; Amazon units are actual from the S&amp;T report). Report generated automatically via scheduled task on 2026-08-09; per-unit contribution rows added 2026-08-13.
   </div>
 
 </div>
