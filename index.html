@@ -292,9 +292,7 @@
     font-weight: 500; letter-spacing: 0.03em; flex-shrink: 0;
   }
 
-  .tag-shopify   { background: #EEF7DE; color: #4A7A00; }
-  .tag-amazon    { background: #FFF3E0; color: #C66900; }
-  .tag-ads       { background: #E8F0FE; color: #1557B0; }
+  .tag-inventory { background: #FDF0E1; color: #B45309; }
   .tag-financial { background: #F5F0FF; color: #6D28D9; }
   .tag-general   { background: #F1F5F9; color: #475569; }
 
@@ -340,22 +338,14 @@
   <div class="layout">
     <aside>
       <div class="sidebar-section">
-        <div class="sidebar-label">Filter by Channel</div>
+        <div class="sidebar-label">Filter by Category</div>
         <button class="filter-btn active" onclick="filterReports('all', this)">
           <span class="filter-dot" style="background:#2D5016"></span>All Reports
           <span class="filter-count" id="count-all">0</span>
         </button>
-        <button class="filter-btn" onclick="filterReports('shopify', this)">
-          <span class="filter-dot" style="background:#96BF48"></span>Shopify DTC
-          <span class="filter-count" id="count-shopify">0</span>
-        </button>
-        <button class="filter-btn" onclick="filterReports('amazon', this)">
-          <span class="filter-dot" style="background:#FF9900"></span>Amazon
-          <span class="filter-count" id="count-amazon">0</span>
-        </button>
-        <button class="filter-btn" onclick="filterReports('ads', this)">
-          <span class="filter-dot" style="background:#4285F4"></span>Google Ads
-          <span class="filter-count" id="count-ads">0</span>
+        <button class="filter-btn" onclick="filterReports('inventory', this)">
+          <span class="filter-dot" style="background:#B45309"></span>Inventory
+          <span class="filter-count" id="count-inventory">0</span>
         </button>
         <button class="filter-btn" onclick="filterReports('financial', this)">
           <span class="filter-dot" style="background:#8B5CF6"></span>Financial / QBO
@@ -431,19 +421,17 @@ if (sessionStorage.getItem(SESSION_KEY) === '1') {
 
 // ─── REPORT REGISTRY ───────────────────────────────────────────────
 // Cowork appends a new entry to this array each time a report is generated.
-// Icons: Shopify=🛍️  Amazon=📦  Google Ads=📊  Financial=💰  General=📄
+// type must be one of: inventory · financial · general
+// Icons: Inventory=🏷️  Financial=💰  General=📄
 const REPORTS = [
   {
     name: "PO Sell-Through & Markdown Review — 2026-08-30",
     file: "po-sellthrough-2026-08-30.html",
     date: "2026-08-30",
-    type: "general",
+    type: "inventory",
     icon: "🏷️",
     description: "3 open PO(s), 64 styles in scope — $168,422 landed cost tied up — 0 style(s) need a push — 24 style-level markdown move(s) to review"
   },
-  
-  
-  
   {
     name: "CFO Dashboard \u2014 Aug 24\u201330, 2026",
     file: "financial-2026-08-30.html",
@@ -652,7 +640,7 @@ function render() {
 }
 
 function typeLabel(t) {
-  return { shopify:'Shopify', amazon:'Amazon', ads:'Google Ads', financial:'Financial', general:'General' }[t] || t;
+  return { inventory:'Inventory', financial:'Financial', general:'General' }[t] || t;
 }
 
 function formatDate(d) {
@@ -661,7 +649,7 @@ function formatDate(d) {
 
 function updateCounts() {
   document.getElementById('count-all').textContent = REPORTS.length;
-  ['shopify','amazon','ads','financial','general'].forEach(t => {
+  ['inventory','financial','general'].forEach(t => {
     const el = document.getElementById('count-' + t);
     if (el) el.textContent = REPORTS.filter(r => r.type === t).length;
   });
