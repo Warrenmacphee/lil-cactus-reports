@@ -190,7 +190,7 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
       <div class="header-meta-item">Total Gross Revenue <strong>$43,026.96</strong></div>
       <div class="header-meta-item">Expected Profit <strong style="color:#b9f6a0;">$9,603.24 🟢</strong></div>
       <div class="header-meta-item">Total PPC Spend <strong>$7,332.55</strong></div>
-      <div class="header-meta-item">Contribution Margin <strong>46.1%</strong></div>
+      <div class="header-meta-item">Contribution Margin <strong>37.4%</strong></div>
       <div class="header-meta-item">Blended ROAS <strong style="color:#f1b0a6;">2.08x</strong> vs 5.0x target</div>
     </div>
   </div>
@@ -235,7 +235,7 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
         <span class="flag-icon">🟢</span>
         <div class="flag-body">
           <strong>Expected Profit $9,603.24 — comfortably above the $8,001 green floor</strong>
-          Contribution Amount $16,081.24 less $6,478.00 weekly OpEx. Wholesale (Faire) carried the week: 58.3% contribution margin with essentially zero paid acquisition cost. Even with the DTC and Amazon ad-efficiency problems flagged above, wholesale's margin strength kept the week solidly profitable.
+          Contribution Amount $16,081.24 less $6,478.00 weekly OpEx. Wholesale (Faire) carried the week: 50.4% contribution margin (on gross sales) with essentially zero paid acquisition cost. Even with the DTC and Amazon ad-efficiency problems flagged above, wholesale's margin strength kept the week solidly profitable.
         </div>
       </div>
 
@@ -293,7 +293,7 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
         <div class="kpi-label">Contribution Amount</div>
         <div class="kpi-value big">$16,081.24</div>
         <div class="kpi-sub">Net Rev $34,861.15 − COGS $11,447.36 − DTC card fee $202.43 − Ads $7,332.55</div>
-        <span class="kpi-badge badge-green">46.1% contribution margin</span>
+        <span class="kpi-badge badge-green">37.4% contribution margin</span>
       </div>
 
       <div class="kpi-card amber">
@@ -308,21 +308,21 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
         <div class="kpi-label">DTC Shopify Revenue</div>
         <div class="kpi-value">$8,097.00</div>
         <div class="kpi-sub">291 units (actual, Finale sold-side)<br>Est. 2.5% card fee applied</div>
-        <span class="kpi-badge badge-green">GM 75.5% · CM 34.9% ✓</span>
+        <span class="kpi-badge badge-green">GM 73.6% · CM 34.1% ✓</span>
       </div>
 
       <div class="kpi-card">
         <div class="kpi-label">Wholesale Revenue (Faire + Direct + Presales)</div>
         <div class="kpi-value">$17,435.96</div>
         <div class="kpi-sub">948 units · Faire fees $2,349.10 (17.7% of Faire gross)<br>Direct Wholesale: $0 this week (0 orders)</div>
-        <span class="kpi-badge badge-green">CM 58.3% ✓</span>
+        <span class="kpi-badge badge-green">CM 50.4% ✓</span>
       </div>
 
       <div class="kpi-card">
         <div class="kpi-label">Amazon SP Revenue (US + MX)</div>
         <div class="kpi-value">$17,494.00</div>
         <div class="kpi-sub">485 units ordered (Finale sold-side, actual)<br>Referral + fulfillment: settlement-actual rates</div>
-        <span class="kpi-badge badge-green">CM 38.1% ✓</span>
+        <span class="kpi-badge badge-amber">CM 25.9% ⚠️</span>
       </div>
 
       <div class="kpi-card">
@@ -374,10 +374,10 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
         <div class="pl-row"><span class="pl-label">Est. Payment/Shopify Fees (2.5%)</span><span class="pl-value neg">−202.43</span></div>
         <div class="pl-row"><span class="pl-label">Net Revenue</span><span class="pl-value">$7,894.58</span></div>
         <div class="pl-row"><span class="pl-label">COGS (291 units × $6.64)</span><span class="pl-value neg">−1,932.24</span></div>
-        <div class="pl-row total"><span class="pl-label">Gross Profit <span class="margin-pill pill-green">75.5%</span></span><span class="pl-value pos">$5,962.34</span></div>
+        <div class="pl-row total"><span class="pl-label">Gross Profit <span class="margin-pill pill-green">73.6%</span></span><span class="pl-value pos">$5,962.34</span></div>
         <div class="pl-row"><span class="pl-label">Google Ads (DTC)</span><span class="pl-value neg">−1,209.43</span></div>
         <div class="pl-row"><span class="pl-label">Meta Ads</span><span class="pl-value neg">−1,995.10</span></div>
-        <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">34.9% ✓</span></span><span class="pl-value pos">$2,757.81</span></div>
+        <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">34.1% ✓</span></span><span class="pl-value pos">$2,757.81</span></div>
         <div class="pl-row" style="margin-top:8px;font-size:11px;color:#6b8a52;"><span>291 units from Finale Sales-by-Category (SKU-detail derived, Completed+Committed status). No per-order discount/refund breakdown pulled this run.</span></div>
         <div class="pl-spacer"></div>
         <div class="pl-row per-unit"><span class="pl-label">Contribution Margin $ / Unit Sold<span class="per-unit-note">$2,757.81 ÷ 291 units (actual)</span></span><span class="pl-value">$9.48</span></div>
@@ -391,9 +391,9 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
         <div class="pl-row"><span class="pl-label">Faire Commission + Processing (actual)</span><span class="pl-value neg">−2,349.10</span></div>
         <div class="pl-row"><span class="pl-label">Net Revenue</span><span class="pl-value">$15,086.86</span></div>
         <div class="pl-row"><span class="pl-label">COGS (948 units × $6.64)</span><span class="pl-value neg">−6,294.72</span></div>
-        <div class="pl-row total"><span class="pl-label">Gross Profit <span class="margin-pill pill-green">58.3%</span></span><span class="pl-value pos">$8,792.14</span></div>
+        <div class="pl-row total"><span class="pl-label">Gross Profit <span class="margin-pill pill-green">50.4%</span></span><span class="pl-value pos">$8,792.14</span></div>
         <div class="pl-row"><span class="pl-label">Ad Spend attributable</span><span class="pl-value">$0.00</span></div>
-        <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">58.3% ✓</span></span><span class="pl-value pos">$8,792.14</span></div>
+        <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">50.4% ✓</span></span><span class="pl-value pos">$8,792.14</span></div>
         <div class="pl-row" style="margin-top:8px;font-size:11px;color:#6b8a52;"><span>Direct Wholesale had zero orders this week. Presales Shipped fees aren't separately itemized in the data source used this run — contribution may be marginally overstated.</span></div>
         <div class="pl-spacer"></div>
         <div class="pl-row per-unit"><span class="pl-label">Contribution Margin $ / Unit Sold<span class="per-unit-note">$8,792.14 ÷ 948 units (actual)</span></span><span class="pl-value">$9.27</span></div>
@@ -406,9 +406,9 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
         <div class="pl-row"><span class="pl-label">Fulfillment, Shipping Labels &amp; Other (~16.0% actual)</span><span class="pl-value neg">−2,799.04</span></div>
         <div class="pl-row"><span class="pl-label">Net Revenue</span><span class="pl-value">$11,879.71</span></div>
         <div class="pl-row"><span class="pl-label">COGS (485 units × $6.64)</span><span class="pl-value neg">−3,220.40</span></div>
-        <div class="pl-row total"><span class="pl-label">Gross Profit <span class="margin-pill pill-green">73.3%</span></span><span class="pl-value pos">$8,659.31</span></div>
+        <div class="pl-row total"><span class="pl-label">Gross Profit <span class="margin-pill pill-green">49.5%</span></span><span class="pl-value pos">$8,659.31</span></div>
         <div class="pl-row"><span class="pl-label">Amazon Ads Spend (SP+SB+SD)</span><span class="pl-value neg">−4,128.02</span></div>
-        <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-green">38.1% ✓</span></span><span class="pl-value pos">$4,531.29</span></div>
+        <div class="pl-row contribution"><span class="pl-label">Contribution <span class="margin-pill pill-red">25.9% ⚠️</span></span><span class="pl-value pos">$4,531.29</span></div>
         <div class="pl-row" style="margin-top:8px;font-size:11px;color:#6b8a52;"><span>Fee rates from settlements 27276013941 (Aug 25–28) + 27273235011 (Aug 25–27), applied against this week's gross. ACOS 37.77%.</span></div>
         <div class="pl-spacer"></div>
         <div class="pl-row per-unit"><span class="pl-label">Contribution Margin $ / Unit Sold<span class="per-unit-note">$4,531.29 ÷ 485 units (US+MX, actual)</span></span><span class="pl-value">$9.34</span></div>
@@ -422,13 +422,13 @@ const REPORT_META = { name: "CFO Dashboard — Aug 24–30, 2026", date: "2026-0
     <table class="campaign-table">
       <thead><tr><th>Channel</th><th class="num">Units Sold</th><th class="num">Avg Selling Price</th><th class="num">Gross Rev</th><th class="num">Net Rev</th><th class="num">COGS</th><th class="num">Gross Profit</th><th class="num">GM%</th><th class="num">Ad Spend</th><th class="num">Contribution</th><th class="num">CM%</th></tr></thead>
       <tbody>
-        <tr><td>Shopify DTC</td><td class="num">291</td><td class="num">$27.82</td><td class="num">$8,097.00</td><td class="num">$7,894.58</td><td class="num">$1,932.24</td><td class="num">$5,962.34</td><td class="num">75.5%</td><td class="num">$3,204.53</td><td class="num">$2,757.81</td><td class="num" style="color:#16a34a;font-weight:600;">34.9%</td></tr>
-        <tr><td>Wholesale — Faire + Direct + Presales</td><td class="num">948</td><td class="num">$18.39</td><td class="num">$17,435.96</td><td class="num">$15,086.86</td><td class="num">$6,294.72</td><td class="num">$8,792.14</td><td class="num">58.3%</td><td class="num">$0.00</td><td class="num">$8,792.14</td><td class="num" style="color:#16a34a;font-weight:600;">58.3%</td></tr>
-        <tr><td>Amazon US + MX (net of referral/fulfillment)</td><td class="num">485</td><td class="num">$36.07</td><td class="num">$17,494.00</td><td class="num">$11,879.71</td><td class="num">$3,220.40</td><td class="num">$8,659.31</td><td class="num">73.3%</td><td class="num">$4,128.02</td><td class="num">$4,531.29</td><td class="num" style="color:#16a34a;font-weight:600;">38.1%</td></tr>
-        <tr class="total-row"><td>TOTAL</td><td class="num">1,724</td><td class="num">$24.96</td><td class="num">$43,026.96</td><td class="num">$34,861.15</td><td class="num">$11,447.36</td><td class="num">$23,413.79</td><td class="num">67.2%</td><td class="num">$7,332.55</td><td class="num">$16,081.24</td><td class="num">46.1%</td></tr>
+        <tr><td>Shopify DTC</td><td class="num">291</td><td class="num">$27.82</td><td class="num">$8,097.00</td><td class="num">$7,894.58</td><td class="num">$1,932.24</td><td class="num">$5,962.34</td><td class="num">73.6%</td><td class="num">$3,204.53</td><td class="num">$2,757.81</td><td class="num" style="color:#16a34a;font-weight:600;">34.1%</td></tr>
+        <tr><td>Wholesale — Faire + Direct + Presales</td><td class="num">948</td><td class="num">$18.39</td><td class="num">$17,435.96</td><td class="num">$15,086.86</td><td class="num">$6,294.72</td><td class="num">$8,792.14</td><td class="num">50.4%</td><td class="num">$0.00</td><td class="num">$8,792.14</td><td class="num" style="color:#16a34a;font-weight:600;">50.4%</td></tr>
+        <tr><td>Amazon US + MX (net of referral/fulfillment)</td><td class="num">485</td><td class="num">$36.07</td><td class="num">$17,494.00</td><td class="num">$11,879.71</td><td class="num">$3,220.40</td><td class="num">$8,659.31</td><td class="num">49.5%</td><td class="num">$4,128.02</td><td class="num">$4,531.29</td><td class="num" style="color:#dc2626;font-weight:600;">25.9%</td></tr>
+        <tr class="total-row"><td>TOTAL</td><td class="num">1,724</td><td class="num">$24.96</td><td class="num">$43,026.96</td><td class="num">$34,861.15</td><td class="num">$11,447.36</td><td class="num">$23,413.79</td><td class="num">54.4%</td><td class="num">$7,332.55</td><td class="num">$16,081.24</td><td class="num">37.4%</td></tr>
       </tbody>
     </table>
-    <div class="table-note">Gross Profit = Net Revenue − COGS; GM% = Gross Profit / Net Revenue. Contribution = Gross Profit − Ad Spend (DTC card fee already netted into DTC Net Revenue; Faire commission/processing and Amazon referral/fulfillment already netted into their channel's Net Revenue — not deducted a second time). Avg Selling Price = Gross Revenue ÷ Units Sold. Units sold across all three channels (291 + 948 + 485 = 1,724) match the Weekly Sales Dashboard's Total Sold units exactly, cross-validating both reports' Finale-derived unit counts.</div>
+    <div class="table-note">Gross Profit = Net Revenue − COGS; GM% = Gross Profit / Gross Sales (Wholesale Gross Sales = Faire + Direct Wholesale gross revenue + Presales Shipped). Contribution = Gross Profit − Ad Spend (DTC card fee already netted into DTC Net Revenue; Faire commission/processing and Amazon referral/fulfillment already netted into their channel's Net Revenue — not deducted a second time); CM% = Contribution / Gross Sales. Avg Selling Price = Gross Revenue ÷ Units Sold. Units sold across all three channels (291 + 948 + 485 = 1,724) match the Weekly Sales Dashboard's Total Sold units exactly, cross-validating both reports' Finale-derived unit counts.</div>
   </div>
 
   <div class="section">
@@ -675,8 +675,8 @@ new Chart(document.getElementById('c2'), {
 new Chart(document.getElementById('c3'), {
   type:'bar',
   data:{labels:['Shopify DTC','Wholesale','Amazon'],datasets:[
-    {label:'Contribution margin %',data:[34.9,58.3,38.1],
-      backgroundColor:['#16a34a','#16a34a','#16a34a']}
+    {label:'Contribution margin %',data:[34.1,50.4,25.9],
+      backgroundColor:['#16a34a','#16a34a','#dc2626']}
   ]},
   options:{indexAxis:'y',scales:{x:{ticks:{callback:v=>v+'%'}},y:{grid:{display:false}}},plugins:{legend:{display:false}}}
 });
