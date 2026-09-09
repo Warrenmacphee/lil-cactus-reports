@@ -425,20 +425,20 @@ if (sessionStorage.getItem(SESSION_KEY) === '1') {
 // Icons: Inventory=🏷️  Financial=💰  General=📄
 const REPORTS = [
   {
+    name: "PO Sell-Through & Markdown Review — 2026-09-06",
+    file: "po-sellthrough-2026-09-06.html",
+    date: "2026-09-06",
+    type: "inventory",
+    icon: "🏷️",
+    description: "14 open PO(s), 219 styles in scope — $395,989 landed cost tied up — 14 style(s) need a push — 106 style-level markdown move(s) to review"
+  },
+  {
     name: "CFO Dashboard \u2014 Aug 31\u2013Sep 6, 2026",
     file: "financial-2026-09-06.html",
     date: "2026-09-06",
     type: "financial",
     icon: "\u{1F4B0}",
     description: "Weekly CFO wk36: Aug 31-Sep 6 - Gross revenue $77,080 (182.1% of $42,320 target, next wk goal $35,526) - Contribution $37,540 - Expected Profit $31,062 (above the $8,001 floor) - Blended ROAS 2.24x vs 5.0x target - Amazon ACOS 28.0% (clear of 30% flag, fee rates carried forward) - Wholesale $52,050 incl. $38,687 presales shipped (CM 62.1% of gross sales) - Amazon $17,298 (CM 41.7% of gross sales) - DTC $7,731 (CM 24.3% of gross sales) - 37,653 units on hand (SKU-level inventory fallback, BigSky unvalidated), 22 weeks inventory"
-  },
-  {
-    name: "PO Sell-Through & Markdown Review — 2026-09-06",
-    file: "po-sellthrough-2026-09-06.html",
-    date: "2026-09-06",
-    type: "inventory",
-    icon: "🏷️",
-    description: "23 open PO(s), 372 styles in scope — $694,922 landed cost tied up — 53 style(s) need a push — 99 style-level markdown move(s) to review"
   },
   {
     name: "PO Sell-Through & Markdown Review — 2026-08-30",
@@ -448,11 +448,6 @@ const REPORTS = [
     icon: "🏷️",
     description: "24 open PO(s), 373 styles in scope — $697,313 landed cost tied up — 53 style(s) need a push — 59 style-level markdown move(s) to review"
   },
-  
-  
-  
-  
-  
   {
     name: "CFO Dashboard \u2014 Aug 24\u201330, 2026",
     file: "financial-2026-08-30.html",
@@ -614,7 +609,7 @@ const REPORTS = [
     description: "Weekly P&L: DTC + Wholesale + Amazon — contribution margin, ad efficiency, action items"
   },
   { name: "CFO Dashboard — May 25–31, 2026", file: "financial-2026-05-31.html", date: "2026-05-31", type: "financial", icon: "💰", description: "Weekly P&L: DTC + Wholesale + Amazon — live data, negative profit week, Meta ROAS blind spot" },
-  ];
+];
 
 // ─── STATE ─────────────────────────────────────────────────────────
 let activeFilter = 'all';
