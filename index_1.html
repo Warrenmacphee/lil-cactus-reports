@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lil Cactus — Reports Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F2EB;
+    --surface: #FDFAF5;
+    --border: #DDD8CC;
+    --text: #1A1812;
+    --muted: #7A7567;
+    --accent: #2D5016;
+    --accent-light: #4A7A28;
+    --accent-pale: #EBF2E4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── PASSWORD GATE ─── */
+  #gate {
+    position: fixed;
+    inset: 0;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  #gate-box {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  }
+
+  #gate-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  #gate-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  #gate-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    letter-spacing: 0.05em;
+    transition: border-color 0.15s;
+    margin-bottom: 0.75rem;
+  }
+
+  #gate-input:focus { border-color: var(--accent); }
+  #gate-input.error { border-color: #DC2626; animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  #gate-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  #gate-btn:hover { background: var(--accent-light); }
+
+  #gate-error {
+    font-size: 0.8rem;
+    color: #DC2626;
+    margin-top: 0.6rem;
+    min-height: 1.2em;
+  }
+
+  /* ─── MAIN APP ─── */
+  #app { display: none; }
+
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: #96BF48;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .header-meta {
+    font-size: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 64px);
+  }
+
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 0 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-section:last-child { border-bottom: none; }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 6px;
+    text-align: left;
+    transition: background 0.15s;
+  }
+
+  .filter-btn:hover { background: var(--accent-pale); }
+  .filter-btn.active { background: var(--accent-pale); color: var(--accent); font-weight: 600; }
+
+  .filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .filter-count { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  main { padding: 2rem; max-width: 900px; }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.03em;
+  }
+
+  .page-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-bar input {
+    flex: 1; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--text); outline: none;
+  }
+
+  .search-bar input::placeholder { color: var(--muted); }
+
+  .reports-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .report-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--card-accent, var(--accent));
+    border-radius: 3px 0 0 3px;
+  }
+
+  .report-card:hover {
+    border-color: var(--accent-light);
+    box-shadow: 0 4px 16px rgba(45,80,22,0.1);
+    transform: translateY(-1px);
+  }
+
+  .report-icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0; background: var(--accent-pale);
+  }
+
+  .report-info { flex: 1; min-width: 0; }
+
+  .report-name {
+    font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .report-meta { font-size: 0.78rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .report-tag {
+    font-size: 0.7rem; font-family: 'DM Mono', monospace;
+    padding: 0.2rem 0.5rem; border-radius: 4px;
+    font-weight: 500; letter-spacing: 0.03em; flex-shrink: 0;
+  }
+
+  .tag-inventory { background: #FDF0E1; color: #B45309; }
+  .tag-financial { background: #F5F0FF; color: #6D28D9; }
+  .tag-general   { background: #F1F5F9; color: #475569; }
+
+  .report-arrow { color: var(--muted); font-size: 1rem; transition: transform 0.15s; }
+  .report-card:hover .report-arrow { transform: translateX(3px); color: var(--accent); }
+
+  .empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-text { font-size: 0.9rem; }
+
+  .last-updated {
+    margin-top: 2rem; padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted);
+  }
+
+  .hidden { display: none !important; }
+</style>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div id="gate-box">
+    <div id="gate-logo">Lil Cactus</div>
+    <div id="gate-sub">Reports Hub · Internal Access</div>
+    <input id="gate-input" type="password" placeholder="Enter password" autocomplete="current-password">
+    <button id="gate-btn" onclick="checkPassword()">Enter</button>
+    <div id="gate-error"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <header>
+    <div class="logo"><span class="logo-dot"></span> Lil Cactus Reports</div>
+    <div class="header-meta">INTERNAL USE ONLY</div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Filter by Category</div>
+        <button class="filter-btn active" onclick="filterReports('all', this)">
+          <span class="filter-dot" style="background:#2D5016"></span>All Reports
+          <span class="filter-count" id="count-all">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('inventory', this)">
+          <span class="filter-dot" style="background:#B45309"></span>Inventory
+          <span class="filter-count" id="count-inventory">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('financial', this)">
+          <span class="filter-dot" style="background:#8B5CF6"></span>Financial / QBO
+          <span class="filter-count" id="count-financial">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterReports('general', this)">
+          <span class="filter-dot" style="background:#64748B"></span>General / Other
+          <span class="filter-count" id="count-general">0</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Sort By</div>
+        <button class="filter-btn active" onclick="sortReports('date-desc', this)">↓ Newest First</button>
+        <button class="filter-btn" onclick="sortReports('date-asc', this)">↑ Oldest First</button>
+        <button class="filter-btn" onclick="sortReports('name', this)">A–Z Name</button>
+      </div>
+    </aside>
+
+    <main>
+      <h1 class="page-title">Reports Hub</h1>
+      <p class="page-subtitle">All Cowork-generated dashboards in one place. Click any report to open it.</p>
+
+      <div class="search-bar">
+        <svg width="16" height="16" fill="none" stroke="#7A7567" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search reports…" oninput="searchReports(this.value)">
+      </div>
+
+      <div class="reports-list" id="reportsList"></div>
+
+      <div class="empty hidden" id="emptyState">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">No reports match your filter.</div>
+      </div>
+
+      <div class="last-updated" id="lastUpdated"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ─── AUTH ──────────────────────────────────────────────────────────
+const HASH = 'af57b70b81943fa8e5acd0aedce34132edd8257ff5d369f981c13f091f6372be';
+const SESSION_KEY = 'lc_reports_auth';
+
+async function checkPassword() {
+  const input = document.getElementById('gate-input');
+  const error = document.getElementById('gate-error');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input.value));
+  const h = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  if (h === HASH) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render();
+  } else {
+    input.classList.add('error');
+    error.textContent = 'Incorrect password. Try again.';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+
+document.getElementById('gate-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+// ─── REPORT REGISTRY ───────────────────────────────────────────────
+// Cowork appends a new entry to this array each time a report is generated.
+// type must be one of: inventory · financial · general
+// Icons: Inventory=🏷️  Financial=💰  General=📄
+const REPORTS = [
+  {
+    name: "PO Sell-Through & Markdown Review — 2026-09-13",
+    file: "po-sellthrough-2026-09-13.html",
+    date: "2026-09-13",
+    type: "inventory",
+    icon: "🏷️",
+    description: "23 open PO(s), 396 styles in scope — $1,083,832 landed cost tied up — 24 style(s) need a push — 151 style-level markdown move(s) to review"
+  },
+  {
+    name: "CFO Dashboard — Sep 7–13, 2026",
+    file: "financial-2026-09-13.html",
+    date: "2026-09-13",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly CFO wk37: Sep 7-13 (corrected 2026-09-16 -- see Methodology footer) - Gross revenue $50,475.80 (86.4% of $58,446 target) - Net Revenue $40,779.43 - Contribution Margin 49.2% - Expected Profit $13,582.94 (green, above $8,001 floor) - Blended ROAS 3.36x vs 5.0x target - Amazon ACOS 24.0% - Wholesale $21,089.64 incl. $12,204.70 presales shipped (CM 57.7%) - Amazon $16,949.27 (CM 34.7%) - DTC $12,436.89 (CM 46.6%) - 24 weeks of inventory"
+  },
+  {
+    name: "Sales Dashboard — Sep 7–13, 2026",
+    file: "weekly-sales-2026-09-13.html",
+    date: "2026-09-13",
+    type: "general",
+    icon: "🛍️",
+    description: "Weekly Sales: Sep 7 - Sep 13/26 - Total Sold $42,982 (1,745 u) - Amazon $16,342 - Shopify $12,437 - Faire RTS $1,694 - Presales $12,508 - Shipped $45,770 - Goal $35,526 (+$7,456) - 33 wks inv - Top style 31899 Sage Green Pumpkin Smocked Bishop Dress (30 u)"
+  },
+  {
+    name: "PO Sell-Through & Markdown Review — 2026-09-06",
+    file: "po-sellthrough-2026-09-06.html",
+    date: "2026-09-06",
+    type: "inventory",
+    icon: "🏷️",
+    description: "14 open PO(s), 219 styles in scope — $395,989 landed cost tied up — 20 style(s) need a push — 36 style-level markdown move(s) to review"
+  },
+  {
+    name: "CFO Dashboard \u2014 Aug 31\u2013Sep 6, 2026",
+    file: "financial-2026-09-06.html",
+    date: "2026-09-06",
+    type: "financial",
+    icon: "\u{1F4B0}",
+    description: "Weekly CFO wk36: Aug 31-Sep 6 - Gross revenue $77,080 (182.1% of $42,320 target, next wk goal $35,526) - Contribution $37,540 - Expected Profit $31,062 (above the $8,001 floor) - Blended ROAS 2.24x vs 5.0x target - Amazon ACOS 28.0% (clear of 30% flag, fee rates carried forward) - Wholesale $52,050 incl. $38,687 presales shipped (CM 62.1% of gross sales) - Amazon $17,298 (CM 41.7% of gross sales) - DTC $7,731 (CM 24.3% of gross sales) - 37,653 units on hand (SKU-level inventory fallback, BigSky unvalidated), 22 weeks inventory"
+  },
+  {
+    name: "PO Sell-Through & Markdown Review — 2026-08-30",
+    file: "po-sellthrough-2026-08-30.html",
+    date: "2026-08-30",
+    type: "inventory",
+    icon: "🏷️",
+    description: "24 open PO(s), 373 styles in scope — $697,313 landed cost tied up — 53 style(s) need a push — 59 style-level markdown move(s) to review"
+  },
+  {
+    name: "CFO Dashboard \u2014 Aug 24\u201330, 2026",
+    file: "financial-2026-08-30.html",
+    date: "2026-08-30",
+    type: "financial",
+    icon: "\u{1F4B0}",
+    description: "Weekly CFO wk35: Aug 24-30 - Gross revenue $43,027 (71.0% of $60,633 target, next wk goal $72,096) - Contribution $16,081 - Expected Profit $9,603 (above the $8,001 floor) - Blended ROAS 2.08x vs 5.0x target - Amazon ACOS 37.77% (above 30% flag) - Wholesale $17,436 (CM 50.4% of gross sales) - Amazon $17,494 (CM 25.9% of gross sales) - DTC $8,097 (CM 34.1% of gross sales) - 43,271 units on hand, 25 weeks inventory"
+  },
+  {
+    name: "Sales Dashboard — Aug 24–30, 2026",
+    file: "weekly-sales-2026-08-30.html",
+    date: "2026-08-30",
+    type: "general",
+    icon: "\u{1F6CD}\u{FE0F}",
+    description: "Weekly Sales wk35: Aug 24-30 - Total Sold $43,027 (1,724 u) vs goal $60,633 (-$17,606) - Amazon $17,494 - Shopify $8,097 - Faire RTS $13,255 (gross) - Presales shipped $4,181 - Shipped $42,240 - 25 weeks inventory - Top style 33287 Sage Green Pumpkin Smocked Ruffle Dress (38 u)"
+  },
+  {
+    name: "CFO Dashboard \u2014 Aug 17\u201323, 2026",
+    file: "financial-2026-08-23.html",
+    date: "2026-08-23",
+    type: "financial",
+    icon: "\u{1F4B0}",
+    description: "Weekly CFO wk34: Aug 17-23 - Gross revenue $42,352 (74% of $57,002 target) - Contribution $13,373 - Expected Profit $6,895 (above the $4,000 floor) - TACoS 17.13% vs 16.45% ceiling - Blended ROAS 5.84x vs 6.08x floor - Wholesale $18,344 (75 Faire orders, CM 53.6%) - Amazon $16,239 (CM 41.1%) - DTC $7,769 at 2.10x, below the 2.70x break-even - cumulative gross profit $10,112 behind the Aug-Dec requirement"
+  },
+  {
+    name: "Sales Dashboard — Aug 17–23, 2026",
+    file: "weekly-sales-2026-08-23.html",
+    date: "2026-08-23",
+    type: "general",
+    icon: "\u{1F6CD}\u{FE0F}",
+    description: "Weekly Sales wk34: Aug 17-23 - Total Sold $39,175 (1,602 u) vs goal $40,995 (-$1,820) - Amazon $16,265 - Shopify $7,769 - Faire RTS $6,491 - Wholesale Direct $881 - Presales shipped $7,770 - Shipped $34,256 - Inventory 42,618 u (BigSky 36,535), 31 weeks - Top style 34311 Light Blue Stripe Seersucker Baby Romper (40 u)"
+  },
+  {
+    name: "Sales Dashboard — Aug 10–16, 2026",
+    file: "weekly-sales-2026-08-16.html",
+    date: "2026-08-16",
+    type: "general",
+    icon: "\u{1F6CD}\u{FE0F}",
+    description: "Weekly Sales wk33: Aug 10-16 - Total Sold $59,772 (2,870 u) vs goal $49,420 (+$10,352) - Amazon $11,498 - Shopify $7,333 - Faire RTS $4,206 - Wholesale Direct $1,234 - Presales shipped $35,501 - Shipped $61,905 - Inventory 37,280 u (BigSky 32,274), 35 weeks - Top style 34311 Light Blue Stripe Seersucker Baby Romper (31 u)"
+  },
+  {
+    name: "CFO Dashboard — Aug 10–16, 2026",
+    file: "financial-2026-08-16.html",
+    date: "2026-08-16",
+    type: "financial",
+    icon: "\u{1F4B0}",
+    description: "Weekly P&L: Aug 10-16 - DTC $7,438 - Wholesale $13,409 - Amazon US+MX $11,587 - Total Rev $32,433 - $9,912 of prior-period wholesale orders reversed, Expected Profit -$1,101 (trading $4,589) - TACoS 19.75% over the 16.45% ceiling, blended ROAS 5.06x vs 6.08x floor - DTC 2.24x below the 2.70x break-even - new 2026 break-even goal tracking block - 9 action items"
+  },
+  {
+    name: "CFO Dashboard — Aug 3–9, 2026",
+    file: "financial-2026-08-09.html",
+    date: "2026-08-09",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Aug 3-9 - DTC $6,074 - Faire $13,243 - Amazon US $14,129 - Amazon MX $228 (conv.) - Total Rev $33,674 - Expected Profit $4,082 marginal band - Blended G+Meta ROAS 1.79x, Amazon ACOS 37.2% - Faire/Amazon CM strong (44.8%/40.3%) - 8 action items"
+  },
+  {
+    name: "CFO Dashboard — Jul 27–Aug 2, 2026",
+    file: "financial-2026-08-02.html",
+    date: "2026-08-02",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Jul 27–Aug 2 — DTC $12,582 · Faire $10,709 · Amazon US $11,715 · Amazon MX $155 (conv.) · Total Rev $35,161 · Expected Profit $3,740 ⚠️ BELOW $4K · Google Ads ROAS 1.15x (PMax + Wholesale Leads waste) · All 3 channels CM 28-30% · 8 action items"
+  },
+  {
+    name: "CFO Dashboard — Jul 27-30, 2026 (4-day)",
+    file: "financial-2026-07-30.html",
+    date: "2026-07-30",
+    type: "financial",
+    icon: "💰",
+    description: "Partial-week P&L: Jul 27-30 (4 days) - DTC $9,431 - Faire $7,750 - Amazon US $6,377 - Total Rev $23,712 - Expected Profit -$1,883 🔴 NEGATIVE - Faire refund spike (CM 7.6%) - 7 action items"
+  },
+  {
+    name: "CFO Dashboard — Jul 13–19, 2026",
+    file: "financial-2026-07-19.html",
+    date: "2026-07-19",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Jul 13–19 — DTC $12,214 · Faire $18,421 · Amazon US $10,829 · Amazon MX $184 (conv.) · Total Rev $41,649 · Expected Profit $3,018 ⚠️ BELOW $4K · Amazon SP contribution NEGATIVE (-1.1%) · 8 action items"
+  },
+  {
+    name: "CFO Dashboard — Jul 6–12, 2026",
+    file: "financial-2026-07-12.html",
+    date: "2026-07-12",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Jul 6–12 — DTC $8,856 · Faire $14,774 · Amazon US $10,884 · Amazon MX $434 (conv.) · Total Rev $34,948 · Expected Profit $7,336 ✅ ABOVE $4K · DTC contribution 16.1% (weak) · Blended CM 39.5% · 8 action items"
+  },
+  {
+    name: "CFO Dashboard — Jun 29–Jul 5, 2026",
+    file: "financial-2026-07-05.html",
+    date: "2026-07-05",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Jun 29–Jul 5 — DTC $8,784 · Faire $4,558 · Amazon US $11,521 · Amazon MX $488 (conv.) · Total Rev $25,351 · Expected Profit $630 🔴 BELOW $4K · All 3 channels below 30% CM · 7 action items"
+  },
+  {
+    name: "CFO Dashboard — Jun 22–28, 2026",
+    file: "financial-2026-06-28.html",
+    date: "2026-06-28",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Jun 22–28 — DTC $10,929 · Faire $4,531 · Amazon US $22,545 · Total Rev $38,005 · Expected Profit $3,948 ⚠️ BELOW $4K · All ROAS channels below target · 7 action items"
+  },
+  {
+    name: "CFO Dashboard — Jun 8–14, 2026",
+    file: "financial-2026-06-14.html",
+    date: "2026-06-14",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: Jun 8–14 — DTC $13,959 · Wholesale $33,742 · Amazon SP est. $7,585 · Expected Profit $19,141 · Amazon CM 11.5% flagged · 20 Amazon campaigns below 2.0x ROAS"
+  },
+  {
+    name: "CFO Dashboard — May 18–24, 2026",
+    file: "financial-2026-05-24.html",
+    date: "2026-05-24",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: May 18–24 — automated run, connector unavailable (2nd consecutive); 3-week data gap flagged, carry-forward escalations"
+  },
+  {
+    name: "CFO Dashboard — May 11–17, 2026",
+    file: "financial-2026-05-17.html",
+    date: "2026-05-17",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: May 11–17 — automated run, connector unavailable; carry-forward flags + COGS confirmed"
+  },
+  {
+    name: "CFO Dashboard — Apr 27–May 3 2026",
+    file: "financial-2026-05-03.html",
+    date: "2026-05-03",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: DTC + Wholesale + Amazon — contribution margin, ad efficiency, action items"
+  },
+  {
+    name: "CFO Dashboard — Apr 6-12 2026",
+    file: "financial-2026-04-12.html",
+    date: "2026-04-12",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: DTC + Wholesale + Amazon US/CA/MX — contribution margin, ad efficiency, action items"
+  },
+  {
+    name: "CFO Dashboard — Apr 20–26 2026",
+    file: "financial-2026-04-26.html",
+    date: "2026-04-26",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: DTC + Wholesale + Amazon — contribution margin, ad efficiency, action items"
+  },
+  {
+    name: "CFO Dashboard — Apr 13-19 2026",
+    file: "financial-2026-04-19.html",
+    date: "2026-04-19",
+    type: "financial",
+    icon: "💰",
+    description: "Weekly P&L: DTC + Wholesale + Amazon — contribution margin, ad efficiency, action items"
+  },
+  { name: "CFO Dashboard — May 25–31, 2026", file: "financial-2026-05-31.html", date: "2026-05-31", type: "financial", icon: "💰", description: "Weekly P&L: DTC + Wholesale + Amazon — live data, negative profit week, Meta ROAS blind spot" },
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────
+let activeFilter = 'all';
+let activeSort = 'date-desc';
+let searchQuery = '';
+
+function render() {
+  let items = [...REPORTS];
+  if (activeFilter !== 'all') items = items.filter(r => r.type === activeFilter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    items = items.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      (r.description || '').toLowerCase().includes(q)
+    );
+  }
+  if (activeSort === 'date-desc') items.sort((a,b) => b.date.localeCompare(a.date));
+  if (activeSort === 'date-asc')  items.sort((a,b) => a.date.localeCompare(b.date));
+  if (activeSort === 'name')      items.sort((a,b) => a.name.localeCompare(b.name));
+
+  const list  = document.getElementById('reportsList');
+  const empty = document.getElementById('emptyState');
+
+  if (items.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    list.innerHTML = items.map(r => `
+      <a class="report-card" href="${r.file}">
+        <div class="report-icon">${r.icon || '📄'}</div>
+        <div class="report-info">
+          <div class="report-name">${r.name}</div>
+          <div class="report-meta">${formatDate(r.date)}${r.description ? ' · ' + r.description : ''}</div>
+        </div>
+        <span class="report-tag tag-${r.type}">${typeLabel(r.type)}</span>
+        <span class="report-arrow">→</span>
+      </a>
+    `).join('');
+  }
+
+  updateCounts();
+  updateFooter();
+}
+
+function typeLabel(t) {
+  return { inventory:'Inventory', financial:'Financial', general:'General' }[t] || t;
+}
+
+function formatDate(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function updateCounts() {
+  document.getElementById('count-all').textContent = REPORTS.length;
+  ['inventory','financial','general'].forEach(t => {
+    const el = document.getElementById('count-' + t);
+    if (el) el.textContent = REPORTS.filter(r => r.type === t).length;
+  });
+}
+
+function updateFooter() {
+  const el = document.getElementById('lastUpdated');
+  if (REPORTS.length === 0) {
+    el.textContent = 'No reports yet — Cowork will populate this index automatically.';
+    return;
+  }
+  const latest = [...REPORTS].sort((a,b) => b.date.localeCompare(a.date))[0];
+  el.textContent = `Last report: ${formatDate(latest.date)} · ${REPORTS.length} total report${REPORTS.length !== 1 ? 's' : ''}`;
+}
+
+function filterReports(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('aside .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function sortReports(sort, btn) {
+  activeSort = sort;
+  document.querySelectorAll('aside .sidebar-section:last-child .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function searchReports(val) {
+  searchQuery = val;
+  render();
+}
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') render();
+</script>
+</body>
+</html>
